@@ -1,21 +1,54 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.http import HttpResponse
+import urllib
+from django.shortcuts import render, redirect
 
-from django.shortcuts import render
 
-from core import core
+from core.MsfToolbox import *
 # Create your views here.
+
+# Global
+toolbox = MsfToolbox()
+
+
+def init(request):
+	toolbox.exploit_multi_handler()
+	return redirect('sessions')
+
+
+def jobs(request):
+	jobs = toolbox.get_jobs()
+	print jobs
+	return render(request, 'server/jobs.html', {'jobs': jobs})
 
 
 def home(request):
     return render(request, 'server/home.html')
 
+
 def sessions(request):
-	sessions = core.get_sessions()
+	sessions = toolbox.get_sessions()
 	return render(request, 'server/sessions.html', {'sessions': sessions})
 
-def session(request):
-	return render(request, '/server/session_explorer.html')
 
+def session(request, id):
+	shell = toolbox.get_session_shell(int(id))
 
+	path = request.GET.get('path')
+	print 'path', path
+
+	ftype = request.GET.get('type')
+	print 'type', ftype
+
+	if path != None and ftype == 'dir':
+		toolbox.cd(shell, path)
+		return redirect('session', id)
+	elif path != None and ftype == 'fil':
+		toolbox.download(shell, path)
+
+	pwd, files = toolbox.ls(shell)
+
+	toolbox.add_routing_files(files)
+
+	return render(request, 'server/session.html', {'id': int(id), 'files': files, 'pwd': pwd})

