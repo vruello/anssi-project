@@ -2,22 +2,31 @@
 from __future__ import unicode_literals
 from django.http import HttpResponse
 import urllib
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 
 from core import core
 from core.explorer import explorer
 # Create your views here.
 
+def init(request):
+	core.init()
+	return redirect('sessions')
+
+def jobs(request):
+	jobs = core.get_jobs()
+	print jobs
+	return render(request, 'server/jobs.html', {'jobs': jobs})
 
 def home(request):
     return render(request, 'server/home.html')
 
 def sessions(request):
 	sessions = core.get_sessions()
-	return render(request, 'server/sessions.html', {'sessions': sessions, 'length': len(sessions), 'dir': dir(sessions.items)})
+	return render(request, 'server/sessions.html', {'sessions': sessions})
+
 
 def session(request, id):
-
 	session = core.get_session_shell(int(id))	
 
 	path = request.GET.get('path')
@@ -28,6 +37,7 @@ def session(request, id):
 
 	if path != None and ftype == 'dir':
 		explorer.cd(session, path)
+		return redirect('session', id)
 	elif path != None and ftype == 'fil':
 		explorer.download(session, path)
 

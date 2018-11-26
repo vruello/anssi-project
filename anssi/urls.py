@@ -21,6 +21,8 @@ from server import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^sessions$', views.sessions, name="sessions"),
-    url(r'sessions/(\d+)$', views.session, name="session"),
+    url(r'^sessions/(\d+)$', views.session, name="session"),
+    url(r'^init$', views.init, name="init"),
+    url(r'^jobs$', views.jobs, name="jobs"),
     url(r'^$', views.home, name="home")
 ]

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Jobs{% endblock %}
+{% block content %}
+    <h2>Active jobs </h2>
+
+    <ul>
+        
+    {% for key,value in jobs.items %}
+        <li><a href="">{{ key }} : {{ value.info }}</a></li>
+    {% endfor %}
+</ul>
+	
+{% endblock %}
