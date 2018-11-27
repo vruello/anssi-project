@@ -41,11 +41,25 @@ def session(request, id):
 	ftype = request.GET.get('type')
 	print 'type', ftype
 
+	delete = request.GET.get('delete', None)
+
+	upload = request.FILES.get('file', None)
+	print 'upload', upload
+	
+	if (upload != None):
+		toolbox.upload(shell, upload)
+
+
 	if path != None and ftype == 'dir':
 		toolbox.cd(shell, path)
 		return redirect('session', id)
-	elif path != None and ftype == 'fil':
-		toolbox.download(shell, path)
+	elif path != None and ftype == 'fil' and delete == None:
+		return toolbox.download(shell, path)
+	elif path != None and delete:
+		if (ftype == 'dir'):
+			toolbox.rmdir(shell, path)
+		else:
+			toolbox.rm(shell, path)
 
 	pwd, files = toolbox.ls(shell)
 

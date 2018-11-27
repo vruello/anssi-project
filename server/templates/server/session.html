@@ -4,8 +4,14 @@
 	<h2>Session {{ id }} </h2>
 	<h3>{{ pwd }}</h3>
 	{% for file in files %}
-        <li><a href='?path={{ file.urlencoded_name }}&type={{ file.type }}'>{{ file.type }} {{ file.name }}</a></li>
-    {% endfor %}
+        <li><a href='?path={{ file.urlencoded_name }}&type={{ file.type }}'>{{ file.type }} {{ file.name }}</a> <a href="?path={{ file.urlencoded_name }}&type={{ file.type }}&delete=1">Delete</a></a></li>
+	{% endfor %}
+	
+	<form action="" enctype="multipart/form-data" method="POST">
+		{% csrf_token %}
+		<input type="file" name="file" />
+		<input type="submit" value="Upload" />
+	</form>
     {% block session_content %}Default{% endblock %}
 	
 	

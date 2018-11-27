@@ -1,6 +1,6 @@
 from metasploit.msfrpc import MsfRpcClient
-from core.tools import explorer
-from core.tools import screenshot
+from tools import explorer
+from tools import screenshot
 
 import os
 import socket
@@ -17,11 +17,16 @@ class MsfToolbox:
 	Paradigme de delegation pour les differents modules qui correspondent a des fonctionnalites
     """
 	def __init__(self, password='mypassword', port=55553):
-		self._client = MsfRpcClient(password, port=port)
+		self._port = port
+		self._password = password
+
+		self.init_client()
 
 		# self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
-		self._ip = '172.17.0.2'
+		self._ip = '172.17.0.3'
 
+	def init_client(self):
+		self._client = MsfRpcClient(self._password, port=self._port)
 
 	def exploit_multi_handler(self, lport=4444):
 		exploit = self._client.modules.use('exploit', 'multi/handler')
@@ -80,6 +85,14 @@ class MsfToolbox:
 	def download(self, shell, name):
 		return explorer.download(shell, name)
 
+	def upload(self, shell, file):
+		return explorer.upload(shell, file)
+
+	def rm(self, shell, name):
+		return explorer.rm(shell, name)
+
+	def rmdir(self, shell, name):
+		return explorer.rmdir(shell, name)
 
 	def add_routing_files(self, files):
 		return explorer.add_routing_files(files)
@@ -89,3 +102,4 @@ class MsfToolbox:
 	def post_take_screenshot(self, session=1, path="~/screenshot_sample.jpg", count=1,
 	                         delay=0, record=True, view_screenshots=False):
 		screenshot.post_take_screenshot(self._client, session, path, count, delay, record, view_screenshots)
+
