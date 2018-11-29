@@ -2,15 +2,13 @@
 {% block title %}Session x{% endblock %}
 {% block content %}
 	<h2>Session {{ id }} </h2>
-	<h3>Screenshots</h3>
 
-	<a href="{% url "session" id %}">Prendre une capture d'écran</a></br>
-
-	{% for i in images %}
-    <img src="{{ i }}" width="500px"/>
-	{% endfor %}
+	<ul>
+		<li><a href="{% url "session_explorer" id %}">Explorer</a></li>
+		<li><a href="{% url "session_screenshot" id %}">Screenshot</a></li>
+		<li><a href="{% url "session_screenshot" id%}">Webcam</a></li>
+	</ul>
 
 	{% block session_content %}Default{% endblock %}
-
 
 {% endblock %}

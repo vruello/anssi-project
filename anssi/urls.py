@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^sessions$', views.sessions, name="sessions"),
     url(r'^sessions/(\d+)$', views.session, name="session"),
+    url(r'^sessions/(\d+)/session_explorer$', views.session_explorer, name="session_explorer"),
+    url(r'^sessions/(\d+)/session_screenshot$', views.session_screenshot, name="session_screenshot"),
     url(r'^init$', views.init, name="init"),
     url(r'^jobs$', views.jobs, name="jobs"),
     url(r'^$', views.home, name="home")

@@ -6,7 +6,10 @@ import urllib
 import time
 import anssi.settings
 from django.http import HttpResponse
+from django.core.files.storage import FileSystemStorage
 import os
+import shutil
+
 
 def ls_files_parser(lsret):
 	lines = lsret.lstrip().split("\n")
@@ -55,22 +58,44 @@ def download(shell, name):
 	path = str(timestamp)
 	full_path = anssi.settings.MEDIA_ROOT + path
 
-	print full_path
 	shell.write('download "' + name + '" "' + full_path + '"')
 
 	ret = shell.read()
-	print ret
-	i = 0
 	while re.match(r".*download.*", ret) == None:
 		time.sleep(0.1)
 		ret = shell.read()
-		print i, ret
-		i += 1
 
-	print 'hello world'
-	file_path = os.path.join(anssi.settings.MEDIA_ROOT, path)
+	file_path = os.path.join(anssi.settings.MEDIA_ROOT, path + '/' + name)
 	if os.path.exists(file_path):
 		fh = open(file_path, 'rb')
-		response = HttpResponse(fh.read(), content_type="application/download")
-		response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+		data = fh.read()
+		response = HttpResponse(content_type="application/download")
+		response['Content-Disposition'] = 'attachment; filename=' + name
+		response.write(data)
+
+		shutil.rmtree(os.path.join(anssi.settings.MEDIA_ROOT, path))
 		return response
+
+def upload(shell, uploaded_file):
+	fs = FileSystemStorage()
+	filename = fs.save(uploaded_file.name, uploaded_file)
+
+	file_path = os.path.join(anssi.settings.MEDIA_ROOT, filename)
+
+	shell.write('upload "' + file_path + '" .')
+
+	ret = shell.read()
+	while re.match(r".*uploaded.*", ret) == None:
+		time.sleep(0.1)
+		ret = shell.read()
+		
+	fs.delete(file_path)
+	
+def rm(shell, name):
+	shell.write('rm "' + name + '"')
+	time.sleep(0.5)
+
+	
+def rmdir(shell, name):
+	shell.write('rmdir "' + name + '"')
+	time.sleep(0.5)

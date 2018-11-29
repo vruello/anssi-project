@@ -1,6 +1,17 @@
-{% extends "session.html" %}
+{% extends "server/session.html" %}
 {% block session_content %}
 	<h3>Explorer</h3>
-	
-	
+
+	<h4>{{ pwd }}</h4>
+	{% for file in files %}
+        <li><a href='?path={{ file.urlencoded_name }}&type={{ file.type }}'>{{ file.type }} {{ file.name }}</a> <a href="?path={{ file.urlencoded_name }}&type={{ file.type }}&delete=1">Delete</a></a></li>
+	{% endfor %}
+
+	<form action="" enctype="multipart/form-data" method="POST">
+		{% csrf_token %}
+		<input type="file" name="file" />
+		<input type="submit" value="Upload" />
+	</form>
+
+
 {% endblock %}

@@ -4,10 +4,10 @@
     <h2>Active sessions </h2>
 
     <ul>
-        
+
     {% for key,value in sessions.items %}
         <li><a href="{% url "session" key %}">{{ key }} : {{ value.info }}</a></li>
     {% endfor %}
 </ul>
-	
+
 {% endblock %}
