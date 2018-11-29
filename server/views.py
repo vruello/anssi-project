@@ -33,6 +33,16 @@ def sessions(request):
 
 
 def session(request, id):
+	# TODO: rename screenshot
+	toolbox.post_take_screenshot()
+	images = toolbox.get_images()
+	import time
+	time.sleep(0.5)
+	return render(request, 'server/session.html', {'id': int(id), 'images': images})
+
+
+def tmp(request, id):
+	# TODO: rename session
 	shell = toolbox.get_session_shell(int(id))
 
 	path = request.GET.get('path')
@@ -47,7 +57,7 @@ def session(request, id):
 	elif path != None and ftype == 'fil':
 		toolbox.download(shell, path)
 
-	pwd, files = toolbox.ls(shell)
+	(pwd, files) = toolbox.ls(shell)
 
 	toolbox.add_routing_files(files)
 

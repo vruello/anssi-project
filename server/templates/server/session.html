@@ -2,11 +2,15 @@
 {% block title %}Session x{% endblock %}
 {% block content %}
 	<h2>Session {{ id }} </h2>
-	<h3>{{ pwd }}</h3>
-	{% for file in files %}
-        <li><a href='?path={{ file.urlencoded_name }}&type={{ file.type }}'>{{ file.type }} {{ file.name }}</a></li>
-    {% endfor %}
-    {% block session_content %}Default{% endblock %}
-	
-	
+	<h3>Screenshots</h3>
+
+	<a href="{% url "session" id %}">Prendre une capture d'écran</a></br>
+
+	{% for i in images %}
+    <img src="{{ i }}" width="500px"/>
+	{% endfor %}
+
+	{% block session_content %}Default{% endblock %}
+
+
 {% endblock %}

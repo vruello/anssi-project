@@ -86,6 +86,9 @@ class MsfToolbox:
 
 
 	# Screenshot
-	def post_take_screenshot(self, session=1, path="~/screenshot_sample.jpg", count=1,
-	                         delay=0, record=True, view_screenshots=False):
+	def post_take_screenshot(self, session=1, path="~/screenshot_sample.jpg", count=1, delay=0, record=True, view_screenshots=False):
 		screenshot.post_take_screenshot(self._client, session, path, count, delay, record, view_screenshots)
+
+
+	def get_images(self):
+		return screenshot.get_images()
