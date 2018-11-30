@@ -47,15 +47,15 @@ def session_explorer(request, id):
 	shell = toolbox.get_session_shell(int(id))
 
 	path = request.GET.get('path')
-	print 'path', path
+	#print 'path', path
 
 	ftype = request.GET.get('type')
-	print 'type', ftype
+	#print 'type', ftype
 
 	delete = request.GET.get('delete', None)
 
 	upload = request.FILES.get('file', None)
-	print 'upload', upload
+	#print 'upload', upload
 
 	if (upload != None):
 		toolbox.upload(shell, upload)

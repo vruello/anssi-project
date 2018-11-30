@@ -8,7 +8,7 @@ This project is educational purposes only.
 
 Open a shell : 
 - `docker load -i <file.tgz>`
-- `docker run -it -p 4444:4444 -p 8888:80 -v ~/path/to/this/repository:/home/root <image-name>`. 
+- `docker run -e LANG=C.UTF-8 -e LC_ALL=C.UTF-8 -it -p 4444:4444 -p 8888:80 -v ~/path/to/this/repository:/home/root <image-name>`. 
 - `msfrpcd -P <secret> -n -f -a 127.0.0.1`
 
 In another shell : 
