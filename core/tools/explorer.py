@@ -18,10 +18,10 @@ def ls_files_parser(lsret):
 	# Skip errors
 	while len(lines) > 0 and len(lines[0]) > 0 and lines[0].split()[0] != 'Listing:':
 		lines.pop(0)
-	
+
 	if (len(lines) <= 5):
-		return files 
-	
+		return files
+
 	# Parse files
 	for line in lines[5:len(lines) - 2]:
 		l = line.split()
@@ -96,14 +96,14 @@ def upload(shell, uploaded_file):
 	while re.match(r".*uploaded.*", ret) == None:
 		time.sleep(0.1)
 		ret = shell.read()
-		
+
 	fs.delete(file_path)
-	
+
 def rm(shell, name):
 	shell.write('rm "' + name + '"')
 	time.sleep(0.5)
 
-	
+
 def rmdir(shell, name):
 	shell.write('rmdir "' + name + '"')
 	time.sleep(0.5)

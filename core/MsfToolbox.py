@@ -1,12 +1,15 @@
 from metasploit.msfrpc import MsfRpcClient
 from tools import explorer
 from tools import screenshot
+from tools import information
 
 import os
+import time
 import socket
 import fcntl
 import struct
 
+MAX_SCREENSHOT = 6
 
 class MsfToolbox:
 	"""
@@ -19,11 +22,15 @@ class MsfToolbox:
 	def __init__(self, password='mypassword', port=55553):
 		self._port = port
 		self._password = password
-
 		self.init_client()
 
 		# self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
 		self._ip = '172.17.0.3'
+
+		# Screenshots infos
+		self._screenshot_id = 0
+		self._screenshot_number = 0
+
 
 	def init_client(self):
 		self._client = MsfRpcClient(self._password, port=self._port)
@@ -85,14 +92,18 @@ class MsfToolbox:
 	def download(self, shell, name):
 		return explorer.download(shell, name)
 
+
 	def upload(self, shell, file):
 		return explorer.upload(shell, file)
+
 
 	def rm(self, shell, name):
 		return explorer.rm(shell, name)
 
+
 	def rmdir(self, shell, name):
 		return explorer.rmdir(shell, name)
+
 
 	def add_routing_files(self, files):
 		return explorer.add_routing_files(files)
@@ -100,8 +111,28 @@ class MsfToolbox:
 
 	# Screenshot
 	def post_take_screenshot(self, session=1, path="~/screenshot_sample.jpg", count=1, delay=0, record=True, view_screenshots=False):
-		screenshot.post_take_screenshot(self._client, session, path, count, delay, record, view_screenshots)
+		screenshot_path = screenshot.get_screenshot_path(self._screenshot_id)
+
+		# Remove old screenshot
+		if os.path.exists(screenshot_path):
+			os.remove(screenshot_path)
+
+		# Take screenshot
+		screenshot.post_take_screenshot(self._client, session, screenshot_path, count, delay, record, view_screenshots)
+
+		# Update counters
+		self._screenshot_id = (self._screenshot_id + 1) % MAX_SCREENSHOT
+		self._screenshot_number = min(self._screenshot_number + 1, MAX_SCREENSHOT)
+
+		# Wait the end of the function (migration or execution of screenshot)
+		while not os.path.exists(screenshot_path):
+			time.sleep(0.1)
 
 
-	def get_images(self):
-		return screenshot.get_images()
+	def get_images_url(self):
+		return screenshot.get_images_url(self._screenshot_id, self._screenshot_number)
+
+
+	# Information
+	def get_sysinfo(self, session):
+		return information.get_sysinfo(self.get_session_shell(session))

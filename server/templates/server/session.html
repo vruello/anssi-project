@@ -6,8 +6,8 @@
 
 	<ul class="nav nav-tabs mb-4">
 		<li class="nav-item">
-			{% url "session" id as session_url %}
-			<a class="nav-link {% if request.get_full_path == session_url %}active{% endif %}" href="{% url "session" id %}">Information</a>
+			{% url "session_information" id as session_information %}
+			<a class="nav-link {% if request.get_full_path == session_information_url %}active{% endif %}" href="{% url "session_information" id %}">Information</a>
 		</li>
 	<li class="nav-item">
 			{% url "session_explorer" id as session_explorer_url %}
@@ -24,7 +24,7 @@
 
 
 	{% block session_content %}
-		
+
 	{% endblock %}
 
 {% endblock %}

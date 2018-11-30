@@ -14,11 +14,10 @@
 		</ol>
 	</nav>
 	</form>
-	
+
 	<div class="d-flex justify-content-between">
 		<a href="?path=..&type=dir" class="btn btn-light"><i class="fas fa-arrow-left"></i> Previous</a>
 		<a href="{% url "session_explorer" id %}" class="btn btn-light"><i class="fas fa-redo"></i> Refresh</a>
-
 	</div>
 
 	<table class="table table-borderless table-hoverable">
@@ -36,17 +35,17 @@
 			{% for file in files %}
         			<tr >
 					<td>{% if file.type == 'dir' %}<i class="fas fa-folder"></i>{% else %}<i class="far fa-file"></i>{% endif %}</td>
-					<td><a href="?path={{ file.urlencoded_name }}&type={{ file.type }}">{{ file.name }}</a></td> 
-					<td>{{ file.size }} B</td> 
-					<td>{{ file.last_modified }} {{ file.hour }}</td> 
-					<td>{{ file.permission }}</td> 
+					<td><a href="?path={{ file.urlencoded_name }}&type={{ file.type }}">{{ file.name }}</a></td>
+					<td>{{ file.size }} B</td>
+					<td>{{ file.last_modified }} {{ file.hour }}</td>
+					<td>{{ file.permission }}</td>
 					<td><a href="?path={{ file.urlencoded_name }}&type={{ file.type }}&delete=1" class="text-danger"><i class="fas fa-trash"></i></a></td>
 				</tr>
 			{% endfor %}
-			
+
 		</tbody>
 	</table>
-	
+
 
 	<hr/>
 

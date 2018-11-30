@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 from django.http import HttpResponse
 import urllib
 from django.shortcuts import render, redirect
-
-
 from core.MsfToolbox import *
+
+import time
 # Create your views here.
 
 # Global
@@ -32,14 +32,17 @@ def sessions(request):
 
 
 def session(request, id):
-	return render(request, 'server/session.html', {'id': int(id)})
+	return session_explorer(request, id)
+
+
+def session_information(request, id):
+	sysinfo = toolbox.get_sysinfo(int(id))
+	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo })
 
 
 def session_screenshot(request, id):
-	toolbox.post_take_screenshot()
-	images = toolbox.get_images()
-	import time
-	time.sleep(0.5)
+	toolbox.post_take_screenshot(session=int(id))
+	images = toolbox.get_images_url()
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images})
 
 

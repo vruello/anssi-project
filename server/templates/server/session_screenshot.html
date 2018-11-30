@@ -1,0 +1,15 @@
+{% extends "server/session.html" %}
+{% block session_content %}
+
+<p class="mb-4">
+	<a class="btn btn-outline-primary" href="{% url "session_screenshot" id %}">Prendre une capture d'écran</a>
+</p>
+
+	{% for i in images %}
+	<a href="{{ i }}" target="_blank">
+    <img class="mb-1" src="{{ i }}" width="500px"/>
+	</a>
+	{% endfor %}
+
+
+{% endblock %}
