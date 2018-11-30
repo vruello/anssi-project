@@ -7,22 +7,19 @@
     {% if jobs_nbr == 0 %}
         No active job yet.
     {% else %}
-      <table class="table table-hover">
+      <table class="table">
             <thead class="thead-light">
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">info</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Type</th>
+                    
                 </tr>
             </thead>
             <tbody>
                 {% for key,value in jobs.items %}
                     <tr>
                         <td>{{ key }}</td>
-                        <td>{{ value.info }}</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
+                        <td>{{ value }}</td>
                     </tr>
                 {% endfor %}
                 

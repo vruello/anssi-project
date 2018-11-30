@@ -28,7 +28,7 @@ def home(request):
 
 def sessions(request):
 	sessions = toolbox.get_sessions()
-	return render(request, 'server/sessions.html', {'sessions': sessions})
+	return render(request, 'server/sessions.html', {'sessions': sessions, 'sessions_nbr': len(sessions)})
 
 
 def session(request, id):
