@@ -1,17 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Homepage{% endblock %}
 {% block content %}
-    <h2>Home </h2>
 
-    <a href="{% url "init" %}">Lancer</a>
-    
-    <p>
-       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rhoncus 
-       massa non tortor. Vestibulum diam diam, posuere in viverra in, 
-       ullamcorper et libero. Donec eget libero quis risus congue imperdiet ac 
-       id lectus. Nam euismod cursus arcu, et consequat libero ullamcorper sit 
-       amet.
-	</p>
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome!</h1>
+        <p class="lead">This is a simple tool to exploit the given payload.</p>
+        <hr class="my-4">
+        <p>First, you need to set up a listener so that this server listen for the malware request. <em>This may take a few seconds...</em></p>
+        <a class="btn btn-primary btn-lg" href="{% url "init" %}" role="button">Launch the listener</a>
+    </div>
+
 	
 	
 {% endblock %}

@@ -2,12 +2,37 @@
 {% block title %}Sessions{% endblock %}
 {% block content %}
     <h2>Active sessions </h2>
+    <hr/>
 
-    <ul>
+    {% if sessions == 0 %}
+        No active session yet.
+    {% else %}
+        <table class="table table-hover mt-5">
+            <thead class="thead-light">
+                <tr >
+                    <th scope="col">#</th>
+                    <th scope="col">Target PC</th>
+                    <th scope="col">Target IPv6</th>
+                    <th scope="col">Local tunnel</th>
+                    <th scope="col">Peer tunnel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for key,value in sessions.items %}
+                <tr class="pointer" onclick="document.location = '{% url "session" key %}';">
+                        <td>{{ key }}</td>
+                        <td>{{ value.info }}</td>
+                        <td>{{ value.session_host}}</td>
+                        <td>{{ value.tunnel_local }}</td>
+                        <td>{{ value.tunnel_peer }}</td>
+                    </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    
+    {% endif %}
 
-    {% for key,value in sessions.items %}
-        <li><a href="{% url "session" key %}">{{ key }} : {{ value.info }}</a></li>
-    {% endfor %}
-</ul>
+    
 
 {% endblock %}

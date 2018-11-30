@@ -14,13 +14,12 @@ toolbox = MsfToolbox()
 
 def init(request):
 	toolbox.exploit_multi_handler()
-	return redirect('sessions')
+	return redirect('jobs')
 
 
 def jobs(request):
 	jobs = toolbox.get_jobs()
-	print jobs
-	return render(request, 'server/jobs.html', {'jobs': jobs})
+	return render(request, 'server/jobs.html', {'jobs': jobs, 'jobs_nbr': len(jobs)})
 
 
 def home(request):
@@ -61,19 +60,19 @@ def session_explorer(request, id):
 	if (upload != None):
 		toolbox.upload(shell, upload)
 
-	if path != None and ftype == 'dir':
+	if path != None and ftype == 'dir' and delete == None:
 		toolbox.cd(shell, path)
-		return redirect('session', id)
+		return redirect('session_explorer', id)
+	elif path != None and ftype == 'dir':
+		toolbox.rmdir(shell, path)
 	elif path != None and ftype == 'fil' and delete == None:
 		return toolbox.download(shell, path)
 	elif path != None and delete:
-		if (ftype == 'dir'):
-			toolbox.rmdir(shell, path)
-		else:
-			toolbox.rm(shell, path)
+		toolbox.rm(shell, path)
 
 	(pwd, files) = toolbox.ls(shell)
 
-	toolbox.add_routing_files(files)
+	#toolbox.add_routing_files(files)
+
 
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd})

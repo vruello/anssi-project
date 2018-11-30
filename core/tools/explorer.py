@@ -14,6 +14,15 @@ import shutil
 def ls_files_parser(lsret):
 	lines = lsret.lstrip().split("\n")
 	files = []
+
+	# Skip errors
+	while len(lines) > 0 and len(lines[0]) > 0 and lines[0].split()[0] != 'Listing:':
+		lines.pop(0)
+	
+	if (len(lines) <= 5):
+		return files 
+	
+	# Parse files
 	for line in lines[5:len(lines) - 2]:
 		l = line.split()
 		#if re.match(r"40777", l[0]) == None:
@@ -21,18 +30,18 @@ def ls_files_parser(lsret):
 			'name': (" ".join(l[6:])).encode('utf8'),
 			'urlencoded_name': urllib.quote_plus(" ".join(l[6:]).encode('utf8')),
 			'permission': l[0],
-			'links': l[1],
+			'size': l[1],
 			'type': l[2],
-			'date': l[3],
+			'last_modified': l[3],
 			'hour': l[4],
-			'date': l[5]
+			'timezone': l[5]
 		})
 
 	return files
 
 def ls_pwd_parser(lsret):
 	l = lsret.lstrip().split("\n")[0].split()[1:]
-	return " ".join(l)
+	return " ".join(l).replace('\\', '/')
 
 
 def add_routing_files(files):
@@ -48,7 +57,6 @@ def ls(shell):
 
 
 def cd(shell, arg):
-	print "cd \"" + arg + "\""
 	shell.write("cd \"" + arg + "\"")
 	time.sleep(0.5)
 
@@ -56,7 +64,7 @@ def cd(shell, arg):
 def download(shell, name):
 	timestamp = int(time.time())
 	path = str(timestamp)
-	full_path = anssi.settings.MEDIA_ROOT + path
+	full_path = os.path.join(anssi.settings.MEDIA_ROOT, path)
 
 	shell.write('download "' + name + '" "' + full_path + '"')
 

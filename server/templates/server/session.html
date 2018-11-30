@@ -2,13 +2,29 @@
 {% block title %}Session x{% endblock %}
 {% block content %}
 	<h2>Session {{ id }} </h2>
+	<hr/>
 
-	<ul>
-		<li><a href="{% url "session_explorer" id %}">Explorer</a></li>
-		<li><a href="{% url "session_screenshot" id %}">Screenshot</a></li>
-		<li><a href="{% url "session_screenshot" id%}">Webcam</a></li>
+	<ul class="nav nav-tabs mb-4">
+		<li class="nav-item">
+			{% url "session" id as session_url %}
+			<a class="nav-link {% if request.get_full_path == session_url %}active{% endif %}" href="{% url "session" id %}">Information</a>
+		</li>
+	<li class="nav-item">
+			{% url "session_explorer" id as session_explorer_url %}
+			<a class="nav-link {% if request.get_full_path == session_explorer_url %}active{% endif %}" href="{% url "session_explorer" id %}">File Explorer</a>
+		</li>
+		<li class="nav-item">
+			{% url "session_screenshot" id as session_screenshot_url %}
+			<a class="nav-link {% if request.get_full_path == session_screenshot_url %}active{% endif %}" href="{% url "session_screenshot" id %}">Screenshots</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="{% url "session_screenshot" id%}">Webcam</a>
+		</li>
 	</ul>
 
-	{% block session_content %}Default{% endblock %}
+
+	{% block session_content %}
+		
+	{% endblock %}
 
 {% endblock %}
