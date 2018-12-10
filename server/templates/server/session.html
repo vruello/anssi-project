@@ -18,7 +18,12 @@
 			<a class="nav-link {% if request.get_full_path == session_screenshot_url %}active{% endif %}" href="{% url "session_screenshot" id %}">Screenshots</a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="{% url "session_screenshot" id%}">Webcam</a>
+			{% url "session_webcam" id as session_webcam_url %}
+			<a class="nav-link {% if request.get_full_path == session_webcam_url %}active{% endif %}" href="{% url "session_webcam" id %}">Webcam</a>
+		</li>
+		<li class="nav-item">
+			{% url "session_live" id as session_live_url %}
+			<a class="nav-link {% if request.get_full_path == session_live_url %}active{% endif %}" href="{% url "session_live" id %}">Live</a>
 		</li>
 	</ul>
 

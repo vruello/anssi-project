@@ -4,6 +4,7 @@ from django.http import HttpResponse
 import urllib
 from django.shortcuts import render, redirect
 from core.MsfToolbox import *
+from datetime import datetime
 
 import time
 # Create your views here.
@@ -42,8 +43,18 @@ def session_information(request, id):
 
 def session_screenshot(request, id):
 	toolbox.post_take_screenshot(session=int(id))
-	images = toolbox.get_images_url()
+	images = toolbox.get_screenshots_url()
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images})
+
+
+def session_webcam(request, id):
+	toolbox.post_take_snapshot(session=int(id))
+	images = toolbox.get_snapshots_url()
+	return render(request, 'server/session_webcam.html', {'id': int(id), 'images': images})
+
+
+def session_live(request, id):
+	return render(request, 'server/session_live.html', {'id': int(id)})
 
 
 def session_explorer(request, id):

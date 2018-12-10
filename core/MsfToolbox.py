@@ -1,6 +1,7 @@
 from metasploit.msfrpc import MsfRpcClient
 from tools import explorer
 from tools import screenshot
+from tools import webcam
 from tools import information
 
 import os
@@ -10,6 +11,7 @@ import fcntl
 import struct
 
 MAX_SCREENSHOT = 6
+MAX_SNAPSHOT = 6
 
 class MsfToolbox:
 	"""
@@ -28,8 +30,14 @@ class MsfToolbox:
 		self._ip = '172.17.0.3'
 
 		# Screenshots infos
+		screenshot.remove_screenhots()
 		self._screenshot_id = 0
 		self._screenshot_number = 0
+
+		# Webcam snapshots infos
+		webcam.remove_snapshots()
+		self._snapshot_id = 0
+		self._snapshot_number = 0
 
 
 	def init_client(self):
@@ -129,10 +137,33 @@ class MsfToolbox:
 			time.sleep(0.1)
 
 
-	def get_images_url(self):
+	def get_screenshots_url(self):
 		return screenshot.get_images_url(self._screenshot_id, self._screenshot_number)
 
 
 	# Information
 	def get_sysinfo(self, session):
 		return information.get_sysinfo(self.get_session_shell(session))
+
+
+	# Webcam snapshots
+	def post_take_snapshot(self, session):
+		shell = self.get_session_shell(session)
+
+		snapshot_path = screenshot.get_screenshot_path(self._screenshot_id)
+
+		# Remove old snapshot
+		if os.path.exists(snapshot_path):
+			os.remove(snapshot_path)
+
+		# Take snapshot
+		webcam.post_take_snapshot(shell, snapshot_path)
+
+		# Update counters if snapshot was created
+		if os.path.exists(snapshot_path):
+			self._snapshot_id = (self._snapshot_id + 1) % MAX_SNAPSHOT
+			self._snapshot_number = min(self._snapshot_number + 1, MAX_SNAPSHOT)
+
+
+	def get_snapshots_url(self):
+		return webcam.get_snapshots_url(self._snapshot_id, self._snapshot_number)
