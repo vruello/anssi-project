@@ -27,7 +27,8 @@ class MsfToolbox:
 		self.init_client()
 
 		# self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
-		self._ip = '172.17.0.3'
+		# self._ip = '172.17.0.3'
+                self._ip = '192.168.4.1'
 
 		# Screenshots infos
 		screenshot.remove_screenhots()
@@ -150,7 +151,7 @@ class MsfToolbox:
 	def post_take_snapshot(self, session):
 		shell = self.get_session_shell(session)
 
-		snapshot_path = screenshot.get_screenshot_path(self._screenshot_id)
+		snapshot_path = webcam.get_snapshot_path(self._snapshot_id)
 
 		# Remove old snapshot
 		if os.path.exists(snapshot_path):
@@ -160,9 +161,9 @@ class MsfToolbox:
 		webcam.post_take_snapshot(shell, snapshot_path)
 
 		# Update counters if snapshot was created
-		if os.path.exists(snapshot_path):
-			self._snapshot_id = (self._snapshot_id + 1) % MAX_SNAPSHOT
-			self._snapshot_number = min(self._snapshot_number + 1, MAX_SNAPSHOT)
+		#if os.path.exists(snapshot_path):
+		self._snapshot_id = (self._snapshot_id + 1) % MAX_SNAPSHOT
+		self._snapshot_number = min(self._snapshot_number + 1, MAX_SNAPSHOT)
 
 
 	def get_snapshots_url(self):

@@ -5,15 +5,17 @@ import anssi.settings
 import os
 
 def post_take_snapshot(shell, snapshot_path):
-    shell.write('webcam_snap -p {}\n'.format(snapshot_path))
+    shell.write('webcam_snap -v false -p {}\n'.format(snapshot_path))
     time.sleep(0.5)
     result = shell.read()
+
+    print result
 
     return
 
 
-def get_snapshots_path(snapshot_id):
-    return os.path.join(anssi.settings.MEDIA_ROOT, "snapshots", "snapshot{}.png".format(snapshot_id))
+def get_snapshot_path(snapshot_id):
+    return os.path.join(anssi.settings.MEDIA_ROOT, "snapshots", "snapshot{}.jpeg".format(snapshot_id))
 
 
 def remove_snapshots():
@@ -30,7 +32,7 @@ def get_snapshots_url(snapshot_id, snapshot_number):
     path = os.path.join(anssi.settings.MEDIA_URL, "snapshots")
 
     for i in range(snapshot_id, snapshot_number + snapshot_id):
-        filename = "snapshot{}.png".format(i % snapshot_number)
+        filename = "snapshot{}.jpeg".format(i % snapshot_number)
         images.append(os.path.join(path, filename))
 
 
