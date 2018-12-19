@@ -27,8 +27,8 @@ def ls_files_parser(lsret):
 		l = line.split()
 		#if re.match(r"40777", l[0]) == None:
 		files.append({
-			'name': (" ".join(l[6:])).encode('utf8'),
-			'urlencoded_name': urllib.quote_plus(" ".join(l[6:]).encode('utf8')),
+			'name': (" ".join(l[6:])),
+			'urlencoded_name': urllib.quote_plus(" ".join(l[6:])),
 			'permission': l[0],
 			'size': l[1],
 			'type': l[2],
@@ -53,6 +53,8 @@ def ls(shell):
 	shell.write('ls\n')
 	time.sleep(0.5)
 	result = shell.read()
+        print result
+        
 	return (ls_pwd_parser(result), ls_files_parser(result))
 
 
