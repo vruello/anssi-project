@@ -41,14 +41,24 @@ def session_information(request, id):
 	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo })
 
 
+
+def action_screenshot(request, id):
+        toolbox.post_take_screenshot(session=int(id))
+        return redirect(session_screenshot, id)
+
+
 def session_screenshot(request, id):
-	toolbox.post_take_screenshot(session=int(id))
 	images = toolbox.get_screenshots_url()
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images})
 
 
+
+def action_webcam(request, id):
+        toolbox.post_take_snapshot(session=int(id))
+        return redirect(session_webcam, id)
+        
+
 def session_webcam(request, id):
-	toolbox.post_take_snapshot(session=int(id))
 	images = toolbox.get_snapshots_url()
 	return render(request, 'server/session_webcam.html', {'id': int(id), 'images': images})
 

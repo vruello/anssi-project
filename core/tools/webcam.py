@@ -6,10 +6,12 @@ import os
 
 def post_take_snapshot(shell, snapshot_path):
     shell.write('webcam_snap -v false -p {}\n'.format(snapshot_path))
-    time.sleep(0.5)
+    
+    # Wait the end of the function (migration or execution of screenshot)
+    while not os.path.exists(snapshot_path):
+	time.sleep(0.2)
+        
     result = shell.read()
-
-    print result
 
     return
 
