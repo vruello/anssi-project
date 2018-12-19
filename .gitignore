@@ -1,0 +1,14 @@
+
+*.pyc
+
+*.o
+
+*.exe
+
+genpayload/shellcode\.py
+
+genpayload/payload\.c
+
+genpayload/compute_key
+
+\.vscode/

