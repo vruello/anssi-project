@@ -3,6 +3,7 @@ from tools import explorer
 from tools import screenshot
 from tools import webcam
 from tools import information
+from tools import keylogger
 
 import os
 import time
@@ -168,3 +169,20 @@ class MsfToolbox:
 
 	def get_snapshots_url(self):
 		return webcam.get_snapshots_url(self._snapshot_id, self._snapshot_number)
+
+	def start_keylogger(self, session):
+		shell = self.get_session_shell(session)
+		return keylogger.start(shell)
+
+	def stop_keylogger(self, session):
+		shell = self.get_session_shell(session)
+		return keylogger.stop(shell)
+	
+	def dump_keylogger(self, session):
+		shell = self.get_session_shell(session)
+		return keylogger.dump(shell)
+
+	def session_close(self, session):
+		shell = self.get_session_shell(session)
+		shell.kill()
+		return
