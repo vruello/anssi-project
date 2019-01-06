@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^sessions/(\d+)/session_webcam$', views.session_webcam, name="session_webcam"),
     url(r'^sessions/(\d+)/action_webcam$', views.action_webcam, name="action_webcam"),
     url(r'^sessions/(\d+)/session_live$', views.session_live, name="session_live"),
+    url(r'^upload_payload$', views.upload_payload, name="upload_payload"),
     url(r'^init$', views.init, name="init"),
     url(r'^jobs$', views.jobs, name="jobs"),
     url(r'^$', views.home, name="home")
