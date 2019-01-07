@@ -27,9 +27,10 @@ class MsfToolbox:
 		self._password = password
 		self.init_client()
 
-		# self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
-		# self._ip = '172.17.0.3'
-                self._ip = '192.168.4.1'
+		#self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
+		#self._ip = '172.17.0.3'
+        #self._ip = '192.168.4.1'
+		self._ip = '172.21.42.1'
 
 		# Screenshots infos
 		screenshot.remove_screenhots()
