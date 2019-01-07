@@ -19,7 +19,7 @@
                 {% for key,value in jobs.items %}
                     <tr>
                         <td>{{ key }}</td>
-                        <td>{{ value }}</td>
+                        <td>{{ value }} <a href="{% url "jobs_kill" key %}">Kill</a></td>
                     </tr>
                 {% endfor %}
                 

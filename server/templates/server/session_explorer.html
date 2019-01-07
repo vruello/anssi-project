@@ -1,6 +1,17 @@
 {% extends "server/session.html" %}
 {% block session_content %}
 
+
+	{% if have_uploaded and have_uploaded_successfully %}
+	<div class="alert alert-success" role="alert">
+		Le fichier a été uploadé avec succès.
+	</div>
+	{% elif have_uploaded %}
+	<div class="alert alert-danger" role="alert">
+		Une erreur est survenue durant l'upload. Cela peut être du à un problème de droits d'écriture.
+	</div>
+	{% endif %}
+
 	<form method="GET">
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
@@ -16,10 +27,11 @@
 	</form>
 
 	<div class="d-flex justify-content-between">
-		<a href="?path=..&type=dir" class="btn btn-light"><i class="fas fa-arrow-left"></i> Previous</a>
-		<a href="{% url "session_explorer" id %}" class="btn btn-light"><i class="fas fa-redo"></i> Refresh</a>
+		<a href="?path=..&type=dir" class="btn btn-light"><i class="fas fa-arrow-left"></i> Précédent</a>
+		<a href="{% url "session_explorer" id %}" class="btn btn-light"><i class="fas fa-redo"></i> Actualiser</a>
 	</div>
 
+	
 	<table class="table table-borderless table-hoverable">
 		<thead>
 			<tr>
@@ -33,7 +45,7 @@
 		</thead>
 		<tbody>
 			{% for file in files %}
-        			<tr >
+				<tr >
 					<td>{% if file.type == 'dir' %}<i class="fas fa-folder"></i>{% else %}<i class="far fa-file"></i>{% endif %}</td>
 					<td><a href="?path={{ file.urlencoded_name }}&type={{ file.type }}">{{ file.name }}</a></td>
 					<td>{{ file.size }} B</td>
@@ -45,6 +57,13 @@
 
 		</tbody>
 	</table>
+	
+	{% if ls_error %}
+	<div class="alert alert-danger" role="alert">
+		Une erreur est survenue lors de la récupération des fichiers. Cela peut être du à des droits d'accès insuffisant.<br/>
+		Cliquez sur <a href="?path=..&type=dir">Précédent</a> pour revenir au répertoire précédent.
+	</div>
+	{% endif %}
 
 
 	<hr/>

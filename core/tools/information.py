@@ -11,9 +11,10 @@ import time
 
 def get_sysinfo(shell):
     shell.write('sysinfo\n')
-    time.sleep(0.5)
-    result = shell.read()
-
+    result = ''
+    while len(result) == 0:
+        time.sleep(1)
+        result = shell.read()
     # Session is timedout
     if not result: return []
 

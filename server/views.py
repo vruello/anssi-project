@@ -18,7 +18,9 @@ toolbox = MsfToolbox()
 
 
 def init_worker(request):
-	toolbox.exploit_multi_handler()
+	lport = request.GET.get('lport', None)
+	payload = request.GET.get('payload', None)
+	toolbox.exploit_multi_handler(lport, payload)
 	return JsonResponse({'init':True}) 
 
 def init(request):
@@ -29,6 +31,9 @@ def jobs(request):
 	jobs = toolbox.get_jobs()
 	return render(request, 'server/jobs.html', {'jobs': jobs, 'jobs_nbr': len(jobs)})
 
+def jobs_kill(request, id):
+	toolbox.kill_job(id)
+	return redirect('jobs')
 
 def home(request):
     return render(request, 'server/home.html')
@@ -80,18 +85,13 @@ def session_explorer(request, id):
 	shell = toolbox.get_session_shell(int(id))
 
 	path = request.GET.get('path')
-	#print 'path', path
-
 	ftype = request.GET.get('type')
-	#print 'type', ftype
-
 	delete = request.GET.get('delete', None)
-
 	upload = request.FILES.get('file', None)
-	#print 'upload', upload
 
+	uploaded = False 
 	if (upload != None):
-		toolbox.upload(shell, upload)
+		uploaded = toolbox.upload(shell, upload)
 
 	if path != None and ftype == 'dir' and delete == None:
 		toolbox.cd(shell, path)
@@ -103,12 +103,12 @@ def session_explorer(request, id):
 	elif path != None and delete:
 		toolbox.rm(shell, path)
 
-	(pwd, files) = toolbox.ls(shell)
+	(pwd, files, error) = toolbox.ls(shell)
 
 	#toolbox.add_routing_files(files)
 
 
-	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd})
+	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd, 'ls_error': error, 'have_uploaded': upload != None, 'have_uploaded_successfully': uploaded})
 
 def upload_payload(request):
 	payload_link = '/media/payload/winview.exe'
@@ -126,7 +126,6 @@ def upload_payload(request):
 		fs = FileSystemStorage()
 
 		if payload_exists:
-			print payload_file
 			fs.delete(payload_file)
 
 		filename = fs.save('payload/winview.exe', uploaded_file)

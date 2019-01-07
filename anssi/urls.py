@@ -38,6 +38,7 @@ urlpatterns = [
     url(r'^init$', views.init, name="init"),
     url(r'^init_worker$', views.init_worker, name="init_worker"),
     url(r'^jobs$', views.jobs, name="jobs"),
+    url(r'^jobs/(\d+)/kill', views.jobs_kill, name="jobs_kill"),
     url(r'^$', views.home, name="home")
 ]
 

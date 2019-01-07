@@ -25,6 +25,9 @@ def ls_files_parser(lsret):
 	# Parse files
 	for line in lines[5:len(lines) - 2]:
 		l = line.split()
+		if len(l) < 7:
+			break
+
 		#if re.match(r"40777", l[0]) == None:
 		files.append({
 			'name': (" ".join(l[6:])),
@@ -40,8 +43,12 @@ def ls_files_parser(lsret):
 	return files
 
 def ls_pwd_parser(lsret):
-	l = lsret.lstrip().split("\n")[0].split()[1:]
-	return " ".join(l).replace('\\', '/')
+	lines = lsret.lstrip().split("\n")
+	for line in lines:
+		l = line.split()
+		if len(l) > 0 and "Listing:" in l[0]:
+			return " ".join(l[1:]).replace('\\', '/')
+	return ""
 
 
 def add_routing_files(files):
@@ -51,10 +58,15 @@ def add_routing_files(files):
 
 def ls(shell):
 	shell.write('ls\n')
-	time.sleep(0.5)
-	result = shell.read()
-        
-	return (ls_pwd_parser(result), ls_files_parser(result))
+	result = '' 
+	while (len(result) == 0):
+		time.sleep(0.5)
+		result = shell.read()
+	print result
+	error = False
+	if "[-] stdapi_fs_ls: Operation failed: Access is denied." in result:
+		error = True
+	return (ls_pwd_parser(result), ls_files_parser(result), error)
 
 
 def cd(shell, arg):
@@ -94,11 +106,19 @@ def upload(shell, uploaded_file):
 	shell.write('upload "' + file_path + '" .')
 
 	ret = shell.read()
-	while re.match(r".*uploaded.*", ret) == None:
+	
+	succeed = False
+	while not "uploaded" in ret and not "Operation failed" in ret:
 		time.sleep(0.1)
 		ret = shell.read()
+		print ret
+
+	if "uploaded" in ret: 
+		succeed = True
 
 	fs.delete(file_path)
+
+	return succeed
 
 def rm(shell, name):
 	shell.write('rm "' + name + '"')
