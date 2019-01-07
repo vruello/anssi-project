@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Payload upload{% endblock %}
+{% block content %}
+    <h2>Payload upload </h2>
+    <hr />
+
+    {% if exists and not uploaded %}
+    <div class="alert alert-info" role="alert">
+        <strong>Current payload : <a href="{{ link }}">Click to download</a></strong>
+    </div>
+    {% endif %}
+
+    {% if uploaded %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <strong>Payload has been uploaded successfully. <a href="{{ link }}">Click to download</a></strong> 
+        </div>
+        
+        <script>
+          $(".alert").alert();
+        </script>
+    {% endif %}
+
+    <form action="" method="POST" enctype="multipart/form-data">
+		<div class="form-group">
+          <label for="">Payload binary</label>
+          <input type="file" class="form-control-file" name="payload_binary" id="payload_binary" placeholder="" aria-describedby="fileHelpId">
+          <small id="fileHelpId" class="form-text text-muted">A payload binary can be generated using the script <code>payload.py</code> in <code>genpayload</code> directory.</small>
+        </div>
+
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-primary">Upload</button>
+	</form>
+
+    
+	
+{% endblock %}

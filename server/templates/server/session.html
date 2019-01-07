@@ -1,15 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Session x{% endblock %}
+{% block title %}Session {{ id }}{% endblock %}
 {% block content %}
+	<p class="float-right">
+		<a href='{% url "session_close" id %}' class="btn btn-danger">Close session</a>
+	</p>
 	<h2>Session {{ id }} </h2>
 	<hr/>
 
+	
+
 	<ul class="nav nav-tabs mb-4">
 		<li class="nav-item">
-			{% url "session_information" id as session_information %}
+			{% url "session_information" id as session_information_url %}
 			<a class="nav-link {% if request.get_full_path == session_information_url %}active{% endif %}" href="{% url "session_information" id %}">Information</a>
 		</li>
-	<li class="nav-item">
+		<li class="nav-item">
 			{% url "session_explorer" id as session_explorer_url %}
 			<a class="nav-link {% if request.get_full_path == session_explorer_url %}active{% endif %}" href="{% url "session_explorer" id %}">File Explorer</a>
 		</li>
@@ -25,6 +30,11 @@
 			{% url "session_live" id as session_live_url %}
 			<a class="nav-link {% if request.get_full_path == session_live_url %}active{% endif %}" href="{% url "session_live" id %}">Live</a>
 		</li>
+
+		<li class="nav-item">
+				{% url "session_keylogger" id as session_keylogger_url %}
+				<a class="nav-link {% if session_keylogger_url in request.get_full_path %}active{% endif %}" href="{% url "session_keylogger" id %}">Keylogger</a>
+			</li>
 	</ul>
 
 

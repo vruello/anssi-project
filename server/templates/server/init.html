@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Init{% endblock %}
+{% block content %}
+    <h2>Init in progress </h2>
+    <hr />
+
+    <p>Please wait while the listener is initialized. Depending of the hardware, it may takes between a few seconds and several minutes.</p>
+
+    <div class="progress" style="height: 20px;">
+        <div id="progressbar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+    <script>
+        var width = 0;
+        var progressbar = document.getElementById('progressbar');
+
+        function launchInitWorker() {
+            const req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(event) {
+                // XMLHttpRequest.DONE === 4
+                if (this.readyState === XMLHttpRequest.DONE) {
+                    if (this.status === 200) {
+                        console.log("Réponse reçue: %s", this.responseText);
+                        width = 100;
+                        setTimeout(redirectToJobs, 1000)
+                    } else {
+                        console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
+                    }
+                }
+            };
+
+            req.open('GET', window.location.href + '_worker', true);
+            req.send(null);
+
+        }
+
+        launchInitWorker()
+
+        function redirectToJobs() {
+            window.location.replace(window.location.protocol + '//' + window.location.host + '/jobs')
+        }
+
+        function updateProgressbar() {
+            width += 10;
+            progressbar.style = 'width: ' + width + '%;'
+        }
+
+        setInterval(updateProgressbar, 1000)
+        
+    </script>
+	
+{% endblock %}
