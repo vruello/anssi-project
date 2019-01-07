@@ -5,11 +5,23 @@
 	<a class="btn btn-outline-primary" href="{% url "action_screenshot" id %}">Prendre une capture d'écran</a>
 </p>
 
-	{% for i in images %}
-	<a href="{{ i }}" target="_blank">
-    <img class="mb-1" src="{{ i }}" width="500px"/>
-	</a>
-	{% endfor %}
+<div class="container">
+				{% for i in images %}
+				   <!-- Row of size 3 -->
+				   {% if forloop.counter0|modulo:3 == 0 %}
+					 <div class="row">
+					 {% endif %}
+
+						 <a href="{{ i }}" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+							 <img src="{{ i }}" class="img-fluid rounded">
+						 </a>
+
+					 {% if forloop.counter0|modulo:3 == 2 or loop.last %}
+				   </div>
+					 {% endif %}
+				{% endfor %}
+    </div>
+</div>
 
 
 {% endblock %}

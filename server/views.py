@@ -56,7 +56,7 @@ def session_screenshot(request, id):
 def action_webcam(request, id):
         toolbox.post_take_snapshot(session=int(id))
         return redirect(session_webcam, id)
-        
+
 
 def session_webcam(request, id):
 	images = toolbox.get_snapshots_url()
@@ -100,3 +100,10 @@ def session_explorer(request, id):
 
 
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd})
+
+# Filter modulo
+from django.template.defaulttags import register
+
+@register.filter
+def modulo(num, val):
+    return num % val

@@ -53,7 +53,9 @@ def ls(shell):
 	shell.write('ls\n')
 	time.sleep(0.5)
 	result = shell.read()
-        
+
+	print result
+
 	return (ls_pwd_parser(result), ls_files_parser(result))
 
 
