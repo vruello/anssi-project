@@ -21,7 +21,7 @@ def init_worker(request):
 	lport = request.GET.get('lport', None)
 	payload = request.GET.get('payload', None)
 	toolbox.exploit_multi_handler(lport, payload)
-	return JsonResponse({'init':True}) 
+	return JsonResponse({'init':True})
 
 def init(request):
 	return render(request, 'server/init.html')
@@ -62,7 +62,7 @@ def action_screenshot(request, id):
 
 
 def session_screenshot(request, id):
-	images = toolbox.get_screenshots_url()
+	images = toolbox.get_screenshots_url(session=int(id))
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images})
 
 
@@ -72,7 +72,7 @@ def action_webcam(request, id):
 
 
 def session_webcam(request, id):
-	images = toolbox.get_snapshots_url()
+	images = toolbox.get_snapshots_url(session=int(id))
 	return render(request, 'server/session_webcam.html', {'id': int(id), 'images': images})
 
 
@@ -88,7 +88,7 @@ def session_explorer(request, id):
 	delete = request.GET.get('delete', None)
 	upload = request.FILES.get('file', None)
 
-	uploaded = False 
+	uploaded = False
 	if (upload != None):
 		uploaded = toolbox.upload(shell, upload)
 

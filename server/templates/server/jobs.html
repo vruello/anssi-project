@@ -12,21 +12,23 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Type</th>
-                    
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for key,value in jobs.items %}
                     <tr>
                         <td>{{ key }}</td>
-                        <td>{{ value }} <a href="{% url "jobs_kill" key %}">Kill</a></td>
+                        <td>{{ value }}</td>
+                        <!--  <a href="{% url "jobs_kill" key %}">Kill</a></td>-->
+                        <td><a href="{% url "jobs_kill" key %}" class="text-danger"><i class="fas fa-times-circle"></i></a></td>
                     </tr>
                 {% endfor %}
-                
+
             </tbody>
         </table>
     {% endif %}
 
-    
-	
+
+
 {% endblock %}
