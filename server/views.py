@@ -8,38 +8,72 @@ from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 import anssi.settings
 
-
-
 import time
-# Create your views here.
-
-# Global
-toolbox = MsfToolbox()
+from threading import Thread
 
 
+# Initialization of MSFTOOLBOX
+toolbox = None
+
+def handler():
+	""" Thread handler """
+	global toolbox
+	while not toolbox:
+		try:
+			toolbox = MsfToolbox()
+		except:
+			toolbox = None
+		time.sleep(1)
+
+try:
+	# msfrpc has been launched
+	toolbox = MsfToolbox()
+except:
+	# Launch a thread to check if msfrpc has been launched
+	t = Thread(target=handler)
+	t.start()
+
+
+# Views
 def init_worker(request):
 	lport = request.GET.get('lport', None)
 	payload = request.GET.get('payload', None)
 	toolbox.exploit_multi_handler(lport, payload)
 	return JsonResponse({'init':True})
 
+
 def init(request):
+	# Check toolbox
+	if not toolbox:
+		return redirect(home)
+
 	return render(request, 'server/init.html')
 
 
 def jobs(request):
+	# Check toolbox
+	if not toolbox:
+		return redirect(home)
+
 	jobs = toolbox.get_jobs()
 	return render(request, 'server/jobs.html', {'jobs': jobs, 'jobs_nbr': len(jobs)})
+
 
 def jobs_kill(request, id):
 	toolbox.kill_job(id)
 	return redirect('jobs')
 
+
 def home(request):
-    return render(request, 'server/home.html')
+	flag = (toolbox != None)
+	return render(request, 'server/home.html', {'flag': flag})
 
 
 def sessions(request):
+	# Check toolbox
+	if not toolbox:
+		return redirect(home)
+
 	sessions = toolbox.get_sessions()
 	return render(request, 'server/sessions.html', {'sessions': sessions, 'sessions_nbr': len(sessions)})
 
@@ -52,9 +86,11 @@ def session_information(request, id):
 	sysinfo = toolbox.get_sysinfo(int(id))
 	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo })
 
+
 def session_close(request, id):
 	toolbox.session_close(int(id))
 	return redirect('sessions')
+
 
 def action_screenshot(request, id):
 	toolbox.post_take_screenshot(session=int(id))
@@ -105,9 +141,8 @@ def session_explorer(request, id):
 	(pwd, files, error) = toolbox.ls(shell)
 
 	#toolbox.add_routing_files(files)
-
-
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd, 'ls_error': error, 'have_uploaded': upload != None, 'have_uploaded_successfully': uploaded})
+
 
 def upload_payload(request):
 	payload_link = '/media/payload/winview.exe'
