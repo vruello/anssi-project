@@ -1,5 +1,6 @@
 from metasploit.msfrpc import MsfRpcClient
 import time
+import httplib
 
 
 def start(shell):
@@ -11,7 +12,11 @@ def start(shell):
 def stop(shell):
 	shell.write('keyscan_stop\n')
 	time.sleep(0.5)
-	ret = shell.read()
+	try:
+		ret = shell.read()
+	except httplib.CannotSendRequest as e:
+		time.sleep(1)
+		ret = shell.read()
 	return 
 
 def dump(shell):
