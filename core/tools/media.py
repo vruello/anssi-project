@@ -31,6 +31,21 @@ def remove_medias():
             os.remove(full_path)
 
 
+def remove_live_path():
+	live_path = get_live_path()
+
+	if os.path.exists(live_path):
+		os.remove(live_path)
+
+
+def get_live_url():
+	return os.path.join(anssi.settings.MEDIA_URL, "snapshot_live.png")
+
+
+def get_live_path():
+	return os.path.join(anssi.settings.MEDIA_ROOT, "snapshot_live.png")
+
+
 def get_medias(session, type):
     full_path = os.path.join(anssi.settings.MEDIA_ROOT, type)
 

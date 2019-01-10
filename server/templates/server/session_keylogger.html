@@ -18,14 +18,14 @@
 
 	{% if enabled %}
 		<p class="text-center">
-			<a class="btn btn-danger" href="?action=stop" role="button">Stop capturing</a> 
+			<a class="btn btn-danger" href="?action=stop" role="button">Stop capturing</a>
 		</p>
 		<div style="float: right">
 			<div class="spinner-grow text-danger" role="status ">
 				<span class="sr-only">Loading...</span>
 			</div>
 		</div>
-		
+
 		<pre class="mt-5" id="value_container"></pre>
 
 		<script>
@@ -49,16 +49,15 @@
 
 				req.open('GET', window.location.protocol + '//' + window.location.host + '/sessions/{{ id }}/session_keylogger?action=retrieve', true);
 				req.send(null);
-
 			}
 
 			setInterval(getLastStrokes, 2000)
 		</script>
 	{% endif %}
-	
-	
 
 
-    
-	
+
+
+
+
 {% endblock %}

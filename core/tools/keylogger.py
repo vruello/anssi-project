@@ -7,7 +7,8 @@ def start(shell):
 	shell.write('keyscan_start\n')
 	time.sleep(0.5)
 	ret = shell.read()
-	return 
+	return
+
 
 def stop(shell):
 	shell.write('keyscan_stop\n')
@@ -17,7 +18,8 @@ def stop(shell):
 	except httplib.CannotSendRequest as e:
 		time.sleep(1)
 		ret = shell.read()
-	return 
+	return
+	
 
 def dump(shell):
 	shell.write('keyscan_dump\n')

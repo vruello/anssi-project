@@ -113,7 +113,19 @@ def session_webcam(request, id):
 
 
 def session_live(request, id):
-	return render(request, 'server/session_live.html', {'id': int(id)})
+	enabled = False
+	live_url = toolbox.get_live_url()
+
+	if request.GET.get('action') == 'start':
+		toolbox.start_live(int(id))
+		enabled = True
+	elif request.GET.get('action') == 'stop':
+		toolbox.stop_live(int(id))
+		enabled = False
+	elif request.GET.get('action') == 'update':
+		value = toolbox.live_update_frame(int(id))
+
+	return render(request, 'server/session_live.html', {'id': int(id), 'enabled': enabled, 'live_url': live_url})
 
 
 def session_explorer(request, id):

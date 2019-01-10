@@ -9,7 +9,7 @@ def post_take_snapshot(shell, snapshot_path):
 
     # Wait the end of the function (migration or execution of screenshot)
     while not os.path.exists(snapshot_path):
-        time.sleep(0.2)
+        time.sleep(0.1)
 
     # Clear the line
     result = shell.read()
