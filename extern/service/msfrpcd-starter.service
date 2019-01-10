@@ -1,0 +1,11 @@
+[Unit]
+Description=Msfrpcd Starter service
+After=network.target
+
+[Service]
+ExecStart=/opt/metasploit-framework//msfrpcd -P mypassword -n -f -a 127.0.0.1
+User=www-data
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

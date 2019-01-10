@@ -62,7 +62,6 @@ def ls(shell):
 	while (len(result) == 0):
 		time.sleep(0.5)
 		result = shell.read()
-	print result
 	error = False
 	if "[-] stdapi_fs_ls: Operation failed: Access is denied." in result:
 		error = True
@@ -82,7 +81,7 @@ def download(shell, name):
 	shell.write('download "' + name + '" "' + full_path + '"')
 
 	ret = shell.read()
-	while re.match(r".*download.*", ret) == None:
+	while not "download" in ret:
 		time.sleep(0.1)
 		ret = shell.read()
 
@@ -111,7 +110,6 @@ def upload(shell, uploaded_file):
 	while not "uploaded" in ret and not "Operation failed" in ret:
 		time.sleep(0.1)
 		ret = shell.read()
-		print ret
 
 	if "uploaded" in ret: 
 		succeed = True
