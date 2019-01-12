@@ -164,7 +164,7 @@ class MsfToolbox:
 
 	# Live
 	def start_live(self, session):
-		return
+		media.remove_live_path()
 
 
 	def stop_live(self, session):
