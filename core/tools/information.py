@@ -12,12 +12,7 @@ import time
 def get_sysinfo(shell):
     shell.write('sysinfo\n')
     result = ''
-    while len(result) == 0:
-        time.sleep(1)
-        result = shell.read()
-    # Session is timedout
-    if not result: return []
-
+    result = shell.read()
     lines = result.split("\n")
 
     # Only keep the string after ":" (the right part)

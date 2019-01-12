@@ -1,0 +1,2 @@
+class SessionTimedOutException(Exception):
+    pass

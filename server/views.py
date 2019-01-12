@@ -10,6 +10,7 @@ import anssi.settings
 
 import time
 from threading import Thread
+from core.SessionTimedOutException import SessionTimedOutException
 
 
 # Initialization of MSFTOOLBOX
@@ -83,7 +84,11 @@ def session(request, id):
 
 
 def session_information(request, id):
-	sysinfo = toolbox.get_sysinfo(int(id))
+	try:
+		sysinfo = toolbox.get_sysinfo(int(id))
+	except SessionTimedOutException:
+		return render(request, 'server/session_lost.html', {'id': int(id)})
+
 	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo })
 
 
@@ -103,7 +108,11 @@ def session_screenshot(request, id):
 
 
 def action_webcam(request, id):
-	toolbox.post_take_snapshot(session=int(id))
+	try:
+		toolbox.post_take_snapshot(session=int(id))
+	except SessionTimedOutException:
+		return render(request, 'server/session_lost.html', {'id': int(id)})
+
 	return redirect(session_webcam, id)
 
 
@@ -136,21 +145,24 @@ def session_explorer(request, id):
 	delete = request.GET.get('delete', None)
 	upload = request.FILES.get('file', None)
 
-	uploaded = False
-	if (upload != None):
-		uploaded = toolbox.upload(shell, upload)
+	try:
+		uploaded = False
+		if (upload != None):
+			uploaded = toolbox.upload(shell, upload)
 
-	if path != None and ftype == 'dir' and delete == None:
-		toolbox.cd(shell, path)
-		return redirect('session_explorer', id)
-	elif path != None and ftype == 'dir':
-		toolbox.rmdir(shell, path)
-	elif path != None and ftype == 'fil' and delete == None:
-		return toolbox.download(shell, path)
-	elif path != None and delete:
-		toolbox.rm(shell, path)
+		if path != None and ftype == 'dir' and delete == None:
+			toolbox.cd(shell, path)
+			return redirect('session_explorer', id)
+		elif path != None and ftype == 'dir':
+			toolbox.rmdir(shell, path)
+		elif path != None and ftype == 'fil' and delete == None:
+			return toolbox.download(shell, path)
+		elif path != None and delete:
+			toolbox.rm(shell, path)
 
-	(pwd, files, error) = toolbox.ls(shell)
+		(pwd, files, error) = toolbox.ls(shell)
+	except SessionTimedOutException:
+		return render(request, 'server/session_lost.html', {'id': int(id)})
 
 	#toolbox.add_routing_files(files)
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd, 'ls_error': error, 'have_uploaded': upload != None, 'have_uploaded_successfully': uploaded})
@@ -183,15 +195,18 @@ def upload_payload(request):
 def session_keylogger(request, id):
 	enabled = False
 
-	if request.GET.get('action') == 'start':
-		toolbox.start_keylogger(int(id))
-		enabled = True
-	elif request.GET.get('action') == 'stop':
-		toolbox.stop_keylogger(int(id))
-		enabled = False
-	elif request.GET.get('action') == 'retrieve':
-		value = toolbox.dump_keylogger(int(id))
-		return JsonResponse({'value': value})
+	try:
+		if request.GET.get('action') == 'start':
+			toolbox.start_keylogger(int(id))
+			enabled = True
+		elif request.GET.get('action') == 'stop':
+			toolbox.stop_keylogger(int(id))
+			enabled = False
+		elif request.GET.get('action') == 'retrieve':
+			value = toolbox.dump_keylogger(int(id))
+			return JsonResponse({'value': value})
+	except SessionTimedOutException:
+		return render(request, 'server/session_lost.html', {'id': int(id)})
 
 	return render(request, 'server/session_keylogger.html', {'id': int(id), 'enabled': enabled})
 

@@ -11,7 +11,7 @@ import time
 import socket
 import fcntl
 import struct
-
+from Shell import Shell
 
 class MsfToolbox:
 	"""
@@ -26,9 +26,7 @@ class MsfToolbox:
 		self._password = password
 		self.init_client()
 
-		#self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
-		#self._ip = '172.17.0.3'
-        #self._ip = '192.168.4.1'
+		# self._ip = '192.168.4.1'
 		self._ip = '172.21.42.1'
 
 		# Remove old medias
@@ -37,6 +35,7 @@ class MsfToolbox:
 
 	def init_client(self):
 		self._client = MsfRpcClient(self._password, port=self._port)
+		self._console = self._client.consoles.console()
 
 
 	def exploit_multi_handler(self, lport=4444, payload='windows/x64/meterpreter/reverse_tcp'):
@@ -62,15 +61,20 @@ class MsfToolbox:
 		return self._client.sessions.list
 
 
-	def session_close(self, session):
-		shell = self.get_session_shell(session)
+	def session_close(self, session_id):
+		shell = self.get_session_shell(session_id)
 		shell.write('exit')
 		time.sleep(1)
 		return
 
 
-	def get_session_shell(self, index):
-		return self._client.sessions.session(index)
+	def session_kill(self, session_id):
+		""" Hard kill session """
+		self._console.write("sessions -k {}\n".format(session_id))
+
+
+	def get_session_shell(self, session_id):
+		return Shell(self, session_id, self._client.sessions.session(session_id))
 
 
 	def get_client(self):
