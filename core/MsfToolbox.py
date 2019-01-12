@@ -26,8 +26,8 @@ class MsfToolbox:
 		self._password = password
 		self.init_client()
 
-		# self._ip = '192.168.4.1'
-		self._ip = '172.21.42.1'
+		self._ip = '192.168.4.1'
+		#self._ip = '172.21.42.1'
 
 		# Remove old medias
 		media.remove_medias()
