@@ -11,7 +11,7 @@ import time
 import socket
 import fcntl
 import struct
-
+from Shell import Shell
 
 class MsfToolbox:
     """
@@ -134,7 +134,9 @@ msfrpcd -P mypassword -n -f -a 127.0.0.1
     def get_sysinfo(self, session):
         return information.get_sysinfo(self.get_session_shell(session))
 
-    # Webcam snapshots
+	# Live
+	def start_live(self, session):
+		media.remove_live_path()
 
     def post_take_snapshot(self, session):
         shell = self.get_session_shell(session)
@@ -172,6 +174,19 @@ msfrpcd -P mypassword -n -f -a 127.0.0.1
         shell = self.get_session_shell(session)
         return keylogger.stop(shell)
 
-    def dump_keylogger(self, session):
-        shell = self.get_session_shell(session)
-        return keylogger.dump(shell)
+	def dump_keylogger(self, session):
+		shell = self.get_session_shell(session)
+		return keylogger.dump(shell)
+
+
+	# Remote
+	def enable_remote(self):
+		self._remote = True
+
+
+	def disable_remote(self):
+		self._remote = False
+
+
+	def get_remote_state(self):
+		return self._remote

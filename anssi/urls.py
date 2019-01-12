@@ -42,6 +42,7 @@ urlpatterns = [
     url(r'^ready$', views.ready, name="ready"),
     url(r'^help$', views.ready, name="help"),
     url(r'^$', views.home, name="home"),
+    url(r'^remote$', views.remote, name="remote"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

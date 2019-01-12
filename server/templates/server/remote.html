@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Homepage{% endblock %}
+{% block content %}
+
+	{% if not enabled %}
+		<p class="text-center">
+			<a class="btn btn-primary" href="?action=enable" role="button">Activer</a>
+		</p>
+	{% endif %}
+
+	{% if enabled %}
+	<p class="text-center">
+		<a class="btn btn-danger" href="?action=disable" role="button">Désactiver</a>
+	</p>
+	{% endif %}
+
+{% endblock %}

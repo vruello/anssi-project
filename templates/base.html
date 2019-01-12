@@ -30,7 +30,8 @@
                 <a class="nav-item nav-link {% if sessions_url in request.get_full_path %}active{% endif %}" href="{% url "sessions" %}">Sessions</a>
                 <a class="nav-item nav-link {% if jobs_url in request.get_full_path %}active{% endif %}" href="{% url "jobs" %}">Gestionnaires</a>
                 <a class="nav-item nav-link {% if upload_payload_url in request.get_full_path  %}active{% endif %}" href="{% url "upload_payload" %}">Téléverser un logiciel malveillant</a>
-                    
+                <a class="nav-item nav-link {% if request.get_full_path == remote_url %}active{% endif %}" href="{% url "remote" %}">Activation distante</a>
+
                 </div>
                 {% url "help" as help_url %}
                 <a class="navbar-text nav-item nav-link {% if help_url == request.get_full_path %}active{% endif %}" href="{% url "help" %}">Aide</a>

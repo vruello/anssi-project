@@ -58,10 +58,9 @@ def add_routing_files(files):
 
 def ls(shell):
 	shell.write('ls\n')
-	result = '' 
-	while (len(result) == 0):
-		time.sleep(0.5)
-		result = shell.read()
+	result = ''
+	result = shell.read()
+
 	error = False
 	if "[-] stdapi_fs_ls: Operation failed: Access is denied." in result:
 		error = True
@@ -81,6 +80,7 @@ def download(shell, name):
 	shell.write('download "' + name + '" "' + full_path + '"')
 
 	ret = shell.read()
+
 	while not "download" in ret:
 		time.sleep(0.1)
 		ret = shell.read()
@@ -105,13 +105,13 @@ def upload(shell, uploaded_file):
 	shell.write('upload "' + file_path + '" .')
 
 	ret = shell.read()
-	
+
 	succeed = False
 	while not "uploaded" in ret and not "Operation failed" in ret:
 		time.sleep(0.1)
 		ret = shell.read()
 
-	if "uploaded" in ret: 
+	if "uploaded" in ret:
 		succeed = True
 
 	fs.delete(file_path)
