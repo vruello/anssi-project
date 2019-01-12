@@ -31,9 +31,8 @@ try:
 	toolbox = MsfToolbox()
 except:
 	# Launch a thread to check if msfrpc has been launched
-	#t = Thread(target=handler)
-	#t.start()
-	pass
+	t = Thread(target=handler)
+	t.start()
 
 
 # Views
