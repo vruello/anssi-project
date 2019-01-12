@@ -24,10 +24,12 @@
                 {% url "sessions" as sessions_url %}
                 {% url "jobs" as jobs_url %}
                 {% url "upload_payload" as upload_payload_url %}
+                {% url "remote" as upload_payload_url %}
                 <a class="nav-item nav-link {% if request.get_full_path == home_url %}active{% endif %}" href="{% url "home" %}">Home</a>
                 <a class="nav-item nav-link {% if sessions_url in request.get_full_path %}active{% endif %}" href="{% url "sessions" %}">Sessions</a>
                 <a class="nav-item nav-link {% if request.get_full_path == jobs_url %}active{% endif %}" href="{% url "jobs" %}">Jobs</a>
                 <a class="nav-item nav-link {% if request.get_full_path == upload_payload_url %}active{% endif %}" href="{% url "upload_payload" %}">Upload payload</a>
+                <a class="nav-item nav-link {% if request.get_full_path == remote_url %}active{% endif %}" href="{% url "remote" %}">Activation distante</a>
 
                 </div>
             </div>

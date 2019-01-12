@@ -17,9 +17,11 @@ def remove_medias():
     screenshots_path = os.path.join(anssi.settings.MEDIA_ROOT, "screenshots")
 
     for root, dirs, files in os.walk(screenshots_path):
-        for name in files:
-            full_path = os.path.join(screenshots_path, name)
-            os.remove(full_path)
+		for name in files:
+			if "png" in name:
+				# Don't remove gitignore
+				full_path = os.path.join(screenshots_path, name)
+				os.remove(full_path)
 
 
     # Remove snapshots
@@ -27,7 +29,8 @@ def remove_medias():
 
     for root, dirs, files in os.walk(snapshots_path):
         for name in files:
-			if "png" in name: # Don't remove gitignore
+			if "png" in name:
+				# Don't remove gitignore
 				full_path = os.path.join(snapshots_path, name)
 				os.remove(full_path)
 

@@ -32,6 +32,9 @@ class MsfToolbox:
 		# Remove old medias
 		media.remove_medias()
 
+		# Init remote to false
+		self.disable_remote()
+
 
 	def init_client(self):
 		self._client = MsfRpcClient(self._password, port=self._port)
@@ -195,3 +198,16 @@ class MsfToolbox:
 	def dump_keylogger(self, session):
 		shell = self.get_session_shell(session)
 		return keylogger.dump(shell)
+
+
+	# Remote
+	def enable_remote(self):
+		self._remote = True
+
+
+	def disable_remote(self):
+		self._remote = False
+
+
+	def get_remote_state(self):
+		return self._remote

