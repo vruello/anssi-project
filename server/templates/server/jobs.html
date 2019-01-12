@@ -1,27 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Jobs{% endblock %}
+{% block title %}Gestionnaires{% endblock %}
 {% block content %}
-    <h2>Active jobs </h2>
+    <h2>Gestionnaires </h2>
     <hr />
 
+    <p>Les gestionnaires vous permettent de vous mettre à l'écoute du logiciel malveillant injecté par le téléphone sur l'ordinateur. </p>
+    <p>La mise en place d'un gestionnaire doit être cohérente avec le logiciel malveillant qui sera téléchargé sur le système victime. Vous pouvez téléverser ce logiciel sur <a href="{% url "upload_payload" %}">cette page</a>.</p>
+
     {% if jobs_nbr == 0 %}
-        No active job yet.
+        Vous n'avez pas de gestionnaires en exécution.
+
+                <a href="{% url "init" %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle    "></i>
+                    Ajouter un gestionnaire
+                </a>
     {% else %}
-      <table class="table">
-            <thead class="thead-light">
+    <table class="table table-striped ">
+            <thead class="thead">
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Type</th>
+                    <th scope="col">Canal</th>
+                    <th scope="col">Port</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                {% for key,value in jobs.items %}
+                {% for job in jobs %}
                     <tr>
-                        <td>{{ key }}</td>
-                        <td>{{ value }}</td>
-                        <!--  <a href="{% url "jobs_kill" key %}">Kill</a></td>-->
-                        <td><a href="{% url "jobs_kill" key %}" class="text-danger"><i class="fas fa-times-circle"></i></a></td>
+                        <td>
+                            {% if job.PAYLOAD == "windows/x64/meterpreter/reverse_https" %}
+                                HTTPS
+                            {% elif job.PAYLOAD == "windows/x64/meterpreter/reverse_http" %}
+                                HTTP
+                            {% elif job.PAYLOAD == "windows/x64/meterpreter/reverse_tcp" %}
+                                TCP
+                            {% endif %}
+                        </td>
+                        <td>{{ job.LPORT }}</td>
+                        <td><a href="{% url "jobs_kill" job.jid %}" class="text-danger"><i class="fas fa-times-circle"></i></a></td>
                     </tr>
                 {% endfor %}
 

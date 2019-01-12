@@ -1,8 +1,10 @@
 {% extends "server/session.html" %}
 {% block session_content %}
 
-<p class="mb-4">
-	<a class="btn btn-outline-primary" href="{% url "action_webcam" id %}">Prendre un snapshot de la webcam</a>
+<p>Vous pouvez prendre des captures d'écran de l'écran de la victime.</p>
+
+<p class="mb-4 text-center mt-3">
+	<a class="btn btn-outline-primary" href="{% url "action_webcam" id %}"><i class="fas fa-camera-retro    "></i> Prendre un snapshot de la webcam</a>
 </p>
 
 <div class="container">

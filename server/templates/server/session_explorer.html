@@ -35,12 +35,12 @@
 	<table class="table table-borderless table-hoverable">
 		<thead>
 			<tr>
-			<th scope="col">Type</th>
-			<th scope="col">Name</th>
-			<th scope="col">Size</th>
-			<th scope="col">Last modified</th>
-			<th scope="col">Permission</th>
-			<th scope="col">Action</th>
+			<th scope="col"></th>
+			<th scope="col">Nom</th>
+			<th scope="col">Taille</th>
+			<th scope="col">Dernière modification</th>
+			<th scope="col">Permissions</th>
+			<th scope="col"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -68,12 +68,13 @@
 
 	<hr/>
 
-	<h5>Upload a file</h5>
+	<h5>Téléverser un fichier</h5>
 
+	<p>Téléverser directement un fichier de votre ordinateur vers le dossier courant de la victime.</p>
 	<form action="" enctype="multipart/form-data" method="POST">
 		{% csrf_token %}
 		<input type="file" id="file" name="file" />
-		<input type="submit" class="btn btn-secondary" value="Upload" />
+		<input type="submit" class="btn btn-secondary" value="Envoyer" />
 	</form>
 
 

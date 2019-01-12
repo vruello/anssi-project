@@ -35,11 +35,13 @@ urlpatterns = [
     url(r'^sessions/(\d+)/session_live$', views.session_live, name="session_live"),
     url(r'^sessions/(\d+)/session_keylogger$', views.session_keylogger, name="session_keylogger"),
     url(r'^upload_payload$', views.upload_payload, name="upload_payload"),
-    url(r'^init$', views.init, name="init"),
-    url(r'^init_worker$', views.init_worker, name="init_worker"),
+    url(r'^jobs/init$', views.init, name="init"),
+    url(r'^jobs/init_worker$', views.init_worker, name="init_worker"),
     url(r'^jobs$', views.jobs, name="jobs"),
     url(r'^jobs/(\d+)/kill', views.jobs_kill, name="jobs_kill"),
-    url(r'^$', views.home, name="home")
+    url(r'^ready$', views.ready, name="ready"),
+    url(r'^help$', views.ready, name="help"),
+    url(r'^$', views.home, name="home"),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

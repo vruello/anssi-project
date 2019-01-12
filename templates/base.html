@@ -6,30 +6,35 @@
     <link rel="stylesheet" href="{% static "style.css" %}" />
     <link rel="stylesheet" href="{% static "bootstrap-gallery.css" %}" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}Projet ANSSI{% endblock %}</title>
+    <title>{% block title %}WalHID{% endblock %}</title>
     <link rel="stylesheet" href="{% static "bootstrap-4.2.1-dist/css/bootstrap.min.css" %}" />
     <link rel="stylesheet" href="{% static "ekko-lightbox.css" %}" />
+    <script type="text/javascript" src="{% static "jquery-3.3.1.min.js" %}"></script>
+
 </head>
 <body>
     {% block nav %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Projet ANSSI</a>
+            <a class="navbar-brand" href="/">WalHID</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
+                <div class="navbar-nav mr-auto">
                 {% url "home" as home_url %}
                 {% url "sessions" as sessions_url %}
                 {% url "jobs" as jobs_url %}
                 {% url "upload_payload" as upload_payload_url %}
-                <a class="nav-item nav-link {% if request.get_full_path == home_url %}active{% endif %}" href="{% url "home" %}">Home</a>
+                <a class="nav-item nav-link {% if home_url == request.get_full_path %}active{% endif %}" href="{% url "home" %}">Accueil</a>
                 <a class="nav-item nav-link {% if sessions_url in request.get_full_path %}active{% endif %}" href="{% url "sessions" %}">Sessions</a>
-                <a class="nav-item nav-link {% if request.get_full_path == jobs_url %}active{% endif %}" href="{% url "jobs" %}">Jobs</a>
-                <a class="nav-item nav-link {% if request.get_full_path == upload_payload_url %}active{% endif %}" href="{% url "upload_payload" %}">Upload payload</a>
-
+                <a class="nav-item nav-link {% if jobs_url in request.get_full_path %}active{% endif %}" href="{% url "jobs" %}">Gestionnaires</a>
+                <a class="nav-item nav-link {% if upload_payload_url in request.get_full_path  %}active{% endif %}" href="{% url "upload_payload" %}">Téléverser un logiciel malveillant</a>
+                    
                 </div>
+                {% url "help" as help_url %}
+                <a class="navbar-text nav-item nav-link {% if help_url == request.get_full_path %}active{% endif %}" href="{% url "help" %}">Aide</a>
+                
             </div>
         </div>
     </nav>
@@ -39,7 +44,6 @@
        {% block content %}{% endblock %}
    </section>
 
-   <script type="text/javascript" src="{% static "jquery-3.3.1.slim.min.js" %}"></script>
    <script type="text/javascript" src="{% static "bootstrap-4.2.1-dist/js/bootstrap.bundle.min.js" %}"></script>
    <script type="text/javascript" src="{% static "fontawesome-free-5.6.3-web/js/all.js" %}"></script>
 

