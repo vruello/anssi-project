@@ -14,7 +14,6 @@ class Shell:
             # CTRL+C + clean shell (in case of user changing page while stream is on)
             print "KILLED CATCHED"
             self._prompt.kill()
-            self.read()
             self._toolbox.disable_streaming_flag()
 
         self._prompt.write(command)
@@ -44,3 +43,8 @@ class Shell:
         currentTime = datetime.now()
         delta = (currentTime - begin).total_seconds()
         return delta > 30
+
+
+    def clean(self):
+        """ Just read in case something was written (if nothing is written, don't block """
+        self._prompt.read()

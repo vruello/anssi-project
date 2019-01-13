@@ -74,10 +74,11 @@ class MsfToolbox:
         return self._client.sessions.list[session_id]
 
     def session_close(self, session_id):
-        shell = self.get_session_shell(session_id)
-        shell.write('exit')
-        time.sleep(1)
-        return
+        self.session_kill(session_id)
+        #shell = self.get_session_shell(session_id)
+        #shell.write('exit')
+        #time.sleep(1)
+        #return
 
     def session_kill(self, session_id):
         """ Hard kill session """
@@ -91,6 +92,7 @@ class MsfToolbox:
 
     def get_jobs(self):
         jobs = self._client.jobs.list
+        self.kill_screen_jobs(jobs)
         values = []
         for key in jobs:
             info = self._client.jobs.info(key)
@@ -102,6 +104,14 @@ class MsfToolbox:
     def kill_job(self, id):
         return self._client.jobs.stop(id)
 
+
+    def kill_screen_jobs(self, jobs):
+        for (key, j) in jobs.iteritems():
+            if 'Post: windows/gather/homemade_screen_spy' in j:
+                print '[Job killed] {} / {}'.format(key, j)
+                self.kill_job(key)
+    
+    
     def search(self, search_type, pattern):
         search_set = {"EXPLOIT":  self._client.modules.exploits,
                       "POST": self._client.modules.post}
@@ -192,12 +202,15 @@ class MsfToolbox:
         media.remove_live_path()
         shell = self.get_session_shell(session)
         live_path = media.get_live_path()
-        webcam.start_live(shell, live_path)
-        self.enable_streaming_flag()
+
+        res = webcam.start_live(shell, live_path)
+
+        if res:
+            self.enable_streaming_flag()
 
     def stop_live(self, session):
         shell = self.get_session_shell(session)
-        webcam.stop_live(shell)
+        webcam.stop_live(shell, self.get_streaming_flag())
         self.disable_streaming_flag()
         media.remove_live_path()
 
