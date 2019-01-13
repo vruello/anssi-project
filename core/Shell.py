@@ -13,8 +13,9 @@ class Shell:
     def write(self, command):
         if self._toolbox.get_streaming_flag():
             # CTRL+C + clean shell (in case of user changing page while stream is on)
-            shell.kill()
-            shell.read()
+            print "KILLED CATCHED"
+            self._prompt.kill()
+            self.read()
             self._toolbox.disable_streaming_flag()
 
         self._prompt.write(command)

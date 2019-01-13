@@ -25,6 +25,7 @@ def start_live(shell, snapshot_path):
 
     # Clear the line (check timeout as well)
     result = shell.read()
+    print result
 
     return
 
@@ -37,5 +38,5 @@ def stop_live(shell):
 def has_webcam(shell):
     shell.write('webcam_list')
     ret = shell.read()
-
+    
     return not("[-] No webcams were found" in ret)
