@@ -25,16 +25,16 @@ class Console::CommandDispatcher::Stdapi::Webcam
       "webcam_list"   => "List webcams",
       "webcam_snap"   => "Take a snapshot from the specified webcam",
       "webcam_stream" => "Play a video stream from the specified webcam",
+      "webcam_stop"   => "Stop the webcam (after stream for example)",
       "record_mic"    => "Record audio from the default microphone for X seconds"
-      "webcam_stop"   => "Stop the webcam (after stream for example)"
     }
     reqs = {
       "webcam_chat"   => [ "webcam_list" ],
       "webcam_list"   => [ "webcam_list" ],
       "webcam_snap"   => [ "webcam_start", "webcam_get_frame", "webcam_stop" ],
       "webcam_stream" => [ "webcam_start", "webcam_get_frame", "webcam_stop" ],
-      "record_mic"    => [ "webcam_audio_record" ],
-      "webcam_stop"   => [ "webcam_stop" ]
+      "webcam_stop"   => [ "webcam_stop" ],
+      "record_mic"    => [ "webcam_audio_record" ]
     }
     filter_commands(all, reqs)
   end

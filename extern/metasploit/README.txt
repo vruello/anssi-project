@@ -14,4 +14,4 @@ Insérer le module "homemade_screen_spy.rb" dans un des repertoires suivant :
 
 
 Insérer le module "webcam.rb"
-metasploit-framework/lib/rex/post/meterpreter/ui/console/command_dispatcher/stdapi/webcam.rb
+/opt/metasploit-framework/lib/rex/post/meterpreter/ui/console/command_dispatcher/stdapi/webcam.rb
