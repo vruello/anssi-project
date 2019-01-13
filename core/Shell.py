@@ -1,6 +1,7 @@
 from SessionTimedOutException import SessionTimedOutException
 from datetime import datetime
 import time
+import httplib
 
 class Shell:
     def __init__(self, toolbox, index, prompt):
@@ -30,6 +31,9 @@ class Shell:
         if ("Rex::TimeoutError Operation timed out." in ret) or self.is_timer_expired(begin):
             self._toolbox.session_kill(self._index)
             raise SessionTimedOutException("SessionTimedOutException: session {} is dead.".format(self._index))
+
+        if ("Broken pipe from" in ret):
+            raise httplib.CannotSendRequest()
 
         return ret
 

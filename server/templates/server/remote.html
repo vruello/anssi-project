@@ -1,16 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Homepage{% endblock %}
+{% block title %}Activation à distance{% endblock %}
 {% block content %}
+
+	<h2>Activation à distance</h2>
+	<hr />
+	
+	<p>Vous pouvez depuis cette page déclencher l'injection du téléphone à distance en cliquant sur "Activer". Cette fonctionnalité n'est active que si le mode "Activation à distance" est sélectionné depuis l'application Android.</p>
+
+	<div class="alert alert-primary" role="alert">
+		Le téléphone doit être connecté au réseau Wifi de la Raspberry-Pi.
+	</div>
+
 
 	{% if not enabled %}
 		<p class="text-center">
-			<a class="btn btn-primary" href="?action=enable" role="button">Activer</a>
+			<a class="btn btn-success" href="?action=enable" role="button"><i class="fas fa-check    "></i> Activer </a>
 		</p>
 	{% endif %}
 
 	{% if enabled %}
 	<p class="text-center">
-		<a class="btn btn-danger" href="?action=disable" role="button">Désactiver</a>
+		<a class="btn btn-danger" href="?action=disable" role="button"><i class="fas fa-times    "></i> Désactiver</a>
 	</p>
 	{% endif %}
 

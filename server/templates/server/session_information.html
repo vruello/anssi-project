@@ -18,19 +18,6 @@
 	
 		</tbody>
 	</table>
-	{% if not is_admin %}	
-	<h3>Devenir administrateur</h3>
-	<p>Si le compte sur lequel le logiciel malveillant est exécuté est administrateur, il est possible de récupérer des droits plus importants sur la machine victime. </p>
-	<p>Cliquer sur "Devenir administrateur" déclenche l'exécution d'une nouvelle charge malveillante avec les droits administrateur. Si un antivirus autre que Windows Defender est installé, cette action peut être détectée. Si l'action réussi, une nouvelle session sera accessible après quelques dizaines de secondes.</p>
-	<p class="text-center"><a class="btn btn-primary" href="{% url "session_getadmin" id %}">Devenir administrateur</a></p> 		
-	{% elif not is_system %}
-	<h3>Devenir système</h3>
-	<p>Système est le plus haut niveau de privilège sur un poste Windows.<p>
-	<p class="text-center"><a class="btn btn-primary" href="{% url "session_getsystem" id %}">Devenir système</a></p>
-	{% else %}
-	<div class="alert alert-success">
-		Vous êtes système !
-	</div>
-	{% endif %}
+	
 
 {% endblock %}
