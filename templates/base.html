@@ -26,16 +26,20 @@
                 {% url "sessions" as sessions_url %}
                 {% url "jobs" as jobs_url %}
                 {% url "upload_payload" as upload_payload_url %}
+                {% url "remote" as remote_url %}
                 <a class="nav-item nav-link {% if home_url == request.get_full_path %}active{% endif %}" href="{% url "home" %}">Accueil</a>
                 <a class="nav-item nav-link {% if sessions_url in request.get_full_path %}active{% endif %}" href="{% url "sessions" %}">Sessions</a>
                 <a class="nav-item nav-link {% if jobs_url in request.get_full_path %}active{% endif %}" href="{% url "jobs" %}">Gestionnaires</a>
-                <a class="nav-item nav-link {% if upload_payload_url in request.get_full_path  %}active{% endif %}" href="{% url "upload_payload" %}">Téléverser un logiciel malveillant</a>
-                <a class="nav-item nav-link {% if request.get_full_path == remote_url %}active{% endif %}" href="{% url "remote" %}">Activation distante</a>
+                <a class="nav-item nav-link {% if upload_payload_url in request.get_full_path  %}active{% endif %}" href="{% url "upload_payload" %}">Logiciel malveillant</a>
+                <a class="nav-item nav-link {% if remote_url in request.get_full_path %}active{% endif %}" href="{% url "remote" %}">Activation à distance</a>
+            </div>
+            <div class="navbar-nav">
+                    {% url "about" as about_url %}
+                    <a class="nav-item nav-link {% if about_url in request.get_full_path %}active{% endif %}" href="{% url "about" %}">A propos</a>
+        
+            </div>
+            
 
-                </div>
-                {% url "help" as help_url %}
-                <a class="navbar-text nav-item nav-link {% if help_url == request.get_full_path %}active{% endif %}" href="{% url "help" %}">Aide</a>
-                
             </div>
         </div>
     </nav>

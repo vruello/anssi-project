@@ -31,7 +31,7 @@
 			<a class="nav-link dropdown-toggle {% if request.get_full_path == session_webcam_url or request.get_full_path == session_live_url%}active{% endif %}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-video"></i> Webcam</a>
 			<div class="dropdown-menu">
 				<a class="dropdown-item {% if request.get_full_path == session_webcam_url %}active{% endif %}" href="{% url "session_webcam" id %}"><i class="fas fa-image    "></i> Photos</a>
-				<a class="dropdown-item {% if request.get_full_path == session_live_url %}active{% endif %}" href="{% url "session_live" id %}"><i class="fas fa-circle text-danger   "></i></i> Direct</a>
+				<a class="dropdown-item {% if request.get_full_path == session_live_url %}active{% endif %}" href="{% url "session_live" id %}"><i class="fas fa-circle text-danger   "></i> Direct</a>
 			</div>
 		</li>
 
@@ -41,9 +41,20 @@
 		</li> -->
 
 		<li class="nav-item">
-				{% url "session_keylogger" id as session_keylogger_url %}
-				<a class="nav-link {% if session_keylogger_url in request.get_full_path %}active{% endif %}" href="{% url "session_keylogger" id %}"><i class="fas fa-keyboard    "></i> Keylogger</a>
-			</li>
+			{% url "session_keylogger" id as session_keylogger_url %}
+			<a class="nav-link {% if session_keylogger_url in request.get_full_path %}active{% endif %}" href="{% url "session_keylogger" id %}"><i class="fas fa-keyboard    "></i> Keylogger</a>
+		</li>
+
+		<li class="nav-item dropdown">
+			{% url "session_passwords" id as session_passwords_url %}
+			{% url "session_wifi_list" id as session_wifi_list_url %}
+			<a class="nav-link dropdown-toggle {% if request.get_full_path == session_passwords_url or request.get_full_path == session_wifi_list_url%}active{% endif %}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-lock-open"></i> Mots de passe</a>
+			<div class="dropdown-menu">
+				<a class="dropdown-item {% if request.get_full_path == session_passwords_url %}active{% endif %}" href="{% url "session_passwords" id %}"><i class="fab fa-windows    "></i> Windows</a>
+				<a class="dropdown-item {% if request.get_full_path == session_wifi_list_url %}active{% endif %}" href="{% url "session_wifi_list" id %}"><i class="fas fa-wifi    "></i> Réseaux wifi</a>
+			</div>
+		</li>
+
 	</ul>
 
 

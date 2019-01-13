@@ -33,6 +33,17 @@ def remove_medias():
 				# Don't remove gitignore
 				full_path = os.path.join(snapshots_path, name)
 				os.remove(full_path)
+    
+    # Remove passwords
+    creds_path = os.path.join(anssi.settings.MEDIA_ROOT, "creds")
+
+    for root, dirs, files in os.walk(creds_path):
+        for name in files:
+			if "txt" in name:
+				# Don't remove gitignore
+				full_path = os.path.join(creds_path, name)
+				os.remove(full_path)
+
 
 
 def remove_live_path():

