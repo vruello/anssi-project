@@ -98,11 +98,11 @@ def session(request, id):
 
 def session_information(request, id):
 	try:
-		sysinfo = toolbox.get_sysinfo(int(id))
+		sysinfo, is_admin, is_system  = toolbox.get_sysinfo(int(id))
 	except SessionTimedOutException:
 		return render(request, 'server/session_lost.html', {'id': int(id)})
 
-	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo })
+	return render(request, 'server/session_information.html', {'id': int(id), 'infos': sysinfo, 'is_admin': is_admin, 'is_system': is_system })
 
 
 def session_close(request, id):
@@ -244,3 +244,12 @@ from django.template.defaulttags import register
 @register.filter
 def modulo(num, val):
     return num % val
+
+def session_getadmin(request, id):
+	value = toolbox.start_bypassuac(id)
+	return  JsonResponse({'value': value})
+
+
+def session_getsystem(request, id):
+	toolbox.get_system(int(id))
+        return JsonResponse({})
