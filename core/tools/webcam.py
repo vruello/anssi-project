@@ -42,8 +42,9 @@ def stop_live(shell, streaming_flag):
         # Avoid mad clicking stop
         time.sleep(1)
         shell.kill() # do a CTRL+C
-        shell.write('ls')
-        shell.read()
+        shell.write('webcam_stop')
+        ret = shell.read()
+        print ret
         print "STOPPED"
 
 
