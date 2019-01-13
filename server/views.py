@@ -40,7 +40,11 @@ except:
 def init_worker(request):
 	lport = request.GET.get('lport', None)
 	payload = request.GET.get('payload', None)
-	toolbox.exploit_multi_handler(lport, payload)
+
+        try:
+	        toolbox.exploit_multi_handler(lport, payload)
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
 	return JsonResponse({'init':True})
 
 
@@ -57,7 +61,11 @@ def jobs(request):
 	if not toolbox:
 		return redirect(home)
 
-	jobs = toolbox.get_jobs()
+        try:
+	        jobs = toolbox.get_jobs()
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	return render(request, 'server/jobs.html', {'jobs': jobs, 'jobs_nbr': len(jobs)})
 
 
@@ -72,9 +80,13 @@ def home(request):
 	sessions = jobs = []
 	_payload_exists = False
 	if toolbox:
-		sessions = toolbox.get_sessions()
-		jobs = toolbox.get_jobs()
-		_payload_exists = payload_exists()
+                try:
+		        sessions = toolbox.get_sessions()
+		        jobs = toolbox.get_jobs()
+		        _payload_exists = payload_exists()
+                except httplib.CannotSendRequest:
+		        return render(request, 'server/error.html')
+	
 
 
 	return render(request, 'server/home.html', {'flag': flag, 'sessions': sessions, 'sessions_nbr': len(sessions), 'jobs': jobs, 'jobs_nbr': len(jobs), 'payload_exists': _payload_exists})
@@ -91,7 +103,11 @@ def sessions(request):
 	if not toolbox:
 		return redirect(home)
 
-	sessions = toolbox.get_sessions()
+        try:
+	        sessions = toolbox.get_sessions()
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	return render(request, 'server/sessions.html', {'sessions': sessions, 'sessions_nbr': len(sessions)})
 
 
@@ -111,17 +127,29 @@ def session_information(request, id):
 
 
 def session_close(request, id):
-	toolbox.session_close(int(id))
+        try:
+	        toolbox.session_close(int(id))
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	return redirect('sessions')
 
 
 def action_screenshot(request, id):
-	toolbox.post_take_screenshot(session=int(id))
+        try:
+	        toolbox.post_take_screenshot(session=int(id))
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	return redirect(session_screenshot, id)
 
 
 def session_screenshot(request, id):
-	images = toolbox.get_screenshots_url(session=int(id))
+        try:
+	        images = toolbox.get_screenshots_url(session=int(id))
+        except httplib.CannotSendRequest:
+                return render(request, 'server/error.html')
+	
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images, 'len_images': len(images)})
 
 
@@ -137,30 +165,42 @@ def action_webcam(request, id):
 
 
 def session_webcam(request, id):
-	has_webcam = toolbox.has_webcam(session=int(id))
-	images = toolbox.get_snapshots_url(session=int(id))
+        try:
+	        has_webcam = toolbox.has_webcam(session=int(id))
+	        images = toolbox.get_snapshots_url(session=int(id))
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	return render(request, 'server/session_webcam.html', {'id': int(id), 'has_webcam': has_webcam, 'images': images})
 
 
 def session_live(request, id):
-	has_webcam = toolbox.has_webcam(session=int(id))
-	enabled = False
-	live_url = toolbox.get_live_url()
+        try:
+	        has_webcam = toolbox.has_webcam(session=int(id))
+	        enabled = False
+	        live_url = toolbox.get_live_url()
 
-	if request.GET.get('action') == 'start':
-		toolbox.start_live(int(id))
-		enabled = True
-	elif request.GET.get('action') == 'stop':
-		toolbox.stop_live(int(id))
-		enabled = False
-	elif request.GET.get('action') == 'update':
-		toolbox.live_update_frame(int(id))
+	        if request.GET.get('action') == 'start':
+		        toolbox.start_live(int(id))
+		        enabled = True
+	        elif request.GET.get('action') == 'stop':
+		        toolbox.stop_live(int(id))
+		        enabled = False
+	        elif request.GET.get('action') == 'update':
+		        toolbox.live_update_frame(int(id))
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 
 	return render(request, 'server/session_live.html', {'id': int(id), 'has_webcam': has_webcam, 'enabled': enabled, 'live_url': live_url})
 
 
 def session_explorer(request, id):
-	shell = toolbox.get_session_shell(int(id))
+        try:
+	        shell = toolbox.get_session_shell(int(id))
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 
 	path = request.GET.get('path')
 	ftype = request.GET.get('type')
@@ -245,12 +285,16 @@ def remote(request):
 	if not toolbox:
 		return redirect(home)
 
-	if request.GET.get('action') == 'enable':
-		toolbox.enable_remote()
-	elif request.GET.get('action') == 'disable':
-		toolbox.disable_remote()
-	elif request.GET.get('action') == 'state':
-		return render(request, 'server/remote_state.html', {'enabled': toolbox.get_remote_state()})
+        try:
+	        if request.GET.get('action') == 'enable':
+		        toolbox.enable_remote()
+	        elif request.GET.get('action') == 'disable':
+		        toolbox.disable_remote()
+	        elif request.GET.get('action') == 'state':
+		        return render(request, 'server/remote_state.html', {'enabled': toolbox.get_remote_state()})
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 
 	return render(request, 'server/remote.html', {'enabled': toolbox.get_remote_state()})
 
@@ -263,7 +307,11 @@ def modulo(num, val):
     return num % val
 
 def session_getadmin(request, id):
-	toolbox.start_bypassuac(id)
+        try:
+	        toolbox.start_bypassuac(id)
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	time.sleep(3)
 	return redirect(sessions)
 
@@ -282,12 +330,20 @@ def load_kiwi_extension(id):
 
 
 def session_wifi_list(request, id):
-	is_admin, is_system = load_kiwi_extension(id)
+        try:
+                is_admin, is_system = load_kiwi_extension(id)
+        except httplib.CannotSendRequest:
+                return render(request, 'server/error.html')
+	
 	return render(request, 'server/session_wifi_list.html', {'id': int(id), 'is_admin': is_admin, 'is_system': is_system })
 
 
 def session_passwords(request, id):
-	is_admin, is_system = load_kiwi_extension(id)
+        try:
+	        is_admin, is_system = load_kiwi_extension(id)
+        except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
+	
 	return render(request, 'server/session_passwords.html', {'id': int(id), 'is_admin': is_admin, 'is_system': is_system })
 
 def session_passwords_async(request, id):

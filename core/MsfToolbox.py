@@ -84,6 +84,8 @@ class MsfToolbox:
     def session_kill(self, session_id):
         """ Hard kill session """
         self._console.write("sessions -k {}\n".format(session_id))
+        self._console.read()
+        
 
     def get_session_shell(self, session_id):
         return Shell(self, session_id, self._client.sessions.session(session_id))
@@ -203,8 +205,9 @@ class MsfToolbox:
 
     def stop_live(self, session):
         shell = self.get_session_shell(session)
+
+        # Webcam_stop is doing CTLC+C and disabling streaming flag
         webcam.stop_live(shell, self.get_streaming_flag())
-        self.disable_streaming_flag()
         media.remove_live_path()
 
     def live_update_frame(self, session):

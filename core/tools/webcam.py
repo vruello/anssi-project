@@ -27,7 +27,7 @@ def start_live(shell, snapshot_path):
     shell.write('webcam_stream -v false -s {}\n'.format(snapshot_path))
 
     # Clear the line (check timeout as well)
-    time.sleep(2)
+    time.sleep(1)
     result = shell.read()
     print result
     
@@ -40,12 +40,9 @@ def start_live(shell, snapshot_path):
 def stop_live(shell, streaming_flag):
     if streaming_flag:
         # Avoid mad clicking stop
-        time.sleep(1)
-        shell.kill() # do a CTRL+C
         shell.write('webcam_stop')
         ret = shell.read()
         print ret
-        print "STOPPED"
 
 
 def has_webcam(shell):
