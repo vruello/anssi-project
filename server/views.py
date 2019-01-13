@@ -310,10 +310,10 @@ def session_getadmin(request, id):
         try:
 	        toolbox.start_bypassuac(id)
         except httplib.CannotSendRequest:
-		return render(request, 'server/error.html')
-	
-	time.sleep(3)
-	return redirect(sessions)
+                return render(request, 'server/error.html')
+        
+	return JsonResponse({'value': True})
+
 
 def load_kiwi_extension(id):
 	is_admin, is_system = toolbox.get_status(int(id))

@@ -63,10 +63,10 @@
                     </thead>
                     <tbody>
                         {% for key,value in sessions.items %}
-                        <tr class="pointer" onclick="document.location = '{% url "session" key %}';">
-                                <td>{{ value.info }}</td>
+                        <tr class="pointer" {% if value.info %} onclick="document.location = '{% url "session" key %}';" {% else %} style="opacity: 0.5" {% endif %}>
+                                <td>{% if value.info %} {{ value.info }} {% else %} Chargement... {% endif %}</td>
                                 <td>{{ value.session_host}}</td>
-                                <td><a href='{% url "session_close" key %}' class="text-danger"><i class="fas fa-times-circle"></i></a></td>
+                                <td>{% if value.info %}<a href='{% url "session_close" key %}' class="text-danger"><i class="fas fa-times-circle"></i></a>{% endif %}</td>
                             </tr>
                         {% endfor %}
 
