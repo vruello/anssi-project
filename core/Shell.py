@@ -10,6 +10,12 @@ class Shell:
 
 
     def write(self, command):
+        if self._toolbox.get_streaming_flag():
+            # CTRL+C + clean shell (in case of user changing page while stream is on)
+            shell.kill()
+            shell.read()
+            self._toolbox.disable_streaming_flag()
+
         self._prompt.write(command)
 
 
@@ -26,6 +32,11 @@ class Shell:
             raise SessionTimedOutException("SessionTimedOutException: session {} is dead.".format(self._index))
 
         return ret
+
+
+    def kill(self):
+        """ Do a CTRL+C on the meterpreter session """
+        self._prompt.kill()
 
 
     def is_timer_expired(self, begin):

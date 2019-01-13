@@ -130,11 +130,13 @@ def action_webcam(request, id):
 
 
 def session_webcam(request, id):
+	has_webcam = toolbox.has_webcam(session=int(id))
 	images = toolbox.get_snapshots_url(session=int(id))
-	return render(request, 'server/session_webcam.html', {'id': int(id), 'images': images})
+	return render(request, 'server/session_webcam.html', {'id': int(id), 'has_webcam': has_webcam, 'images': images})
 
 
 def session_live(request, id):
+	has_webcam = toolbox.has_webcam(session=int(id))
 	enabled = False
 	live_url = toolbox.get_live_url()
 
@@ -145,9 +147,9 @@ def session_live(request, id):
 		toolbox.stop_live(int(id))
 		enabled = False
 	elif request.GET.get('action') == 'update':
-		value = toolbox.live_update_frame(int(id))
+		toolbox.live_update_frame(int(id))
 
-	return render(request, 'server/session_live.html', {'id': int(id), 'enabled': enabled, 'live_url': live_url})
+	return render(request, 'server/session_live.html', {'id': int(id), 'has_webcam': has_webcam, 'enabled': enabled, 'live_url': live_url})
 
 
 def session_explorer(request, id):

