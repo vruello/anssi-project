@@ -78,10 +78,12 @@ def home(request):
 
 	return render(request, 'server/home.html', {'flag': flag, 'sessions': sessions, 'sessions_nbr': len(sessions), 'jobs': jobs, 'jobs_nbr': len(jobs), 'payload_exists': _payload_exists})
 
+
 def ready(request):
 	value = (toolbox != None)
-	
-	return JsonResponse({'value': value}) 
+
+	return JsonResponse({'value': value})
+
 
 def sessions(request):
 	# Check toolbox
@@ -230,6 +232,10 @@ def session_keylogger(request, id):
 
 
 def remote(request):
+	# Check toolbox
+	if not toolbox:
+		return redirect(home)
+
 	if request.GET.get('action') == 'enable':
 		toolbox.enable_remote()
 	elif request.GET.get('action') == 'disable':

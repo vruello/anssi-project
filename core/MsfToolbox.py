@@ -20,24 +20,24 @@ class MsfToolbox:
     # os.system("msfrpcd -P " + mypassword + " -n -f -a 127.0.0.1")
 
     Paradigme de delegation pour les differents modules qui correspondent a des fonctionnalites
-"""
+    """
 
     def __init__(self, password='mypassword', port=55553):
         self._port = port
         self._password = password
         self.init_client()
 
-		self._ip = '192.168.4.1'
-		#self._ip = '172.21.42.1'
+        #self._ip = '192.168.4.1'
+        self._ip = '172.21.42.1'
 
 		# Remove old medias
-		media.remove_medias()
+        media.remove_medias()
 
 		# Init remote to false
-		self.disable_remote()
+        self.disable_remote()
 
 		# Live stream if off at the beginning
-		self._streaming = False
+        self.disable_streaming_flag()
 
 
     def init_client(self):
@@ -130,26 +130,15 @@ class MsfToolbox:
         screenshot_path = media.get_media_path(session, "screenshots")
 
         # Take screenshot
-        screenshot.post_take_screenshot(
-            self._client, session, screenshot_path, count, delay, record, view_screenshots)
+        screenshot.post_take_screenshot(self._client, session, screenshot_path, count, delay, record, view_screenshots)
 
         # Wait the end of the function (migration or execution of screenshot)
         while not os.path.exists(screenshot_path):
             time.sleep(0.1)
 
+
     def get_screenshots_url(self, session):
         return media.get_medias_url(session, "screenshots")
-
-		# Take screenshot
-		screenshot.post_take_screenshot(self._client, session, screenshot_path, count, delay, record, view_screenshots)
-
-		# Wait the end of the function (migration or execution of screenshot)
-		while not os.path.exists(screenshot_path):
-			time.sleep(0.1)
-
-
-	def get_screenshots_url(self, session):
-		return media.get_medias_url(session, "screenshots")
 
 
 	# Information
@@ -208,12 +197,12 @@ class MsfToolbox:
 		self._streaming = True
 
 
-	def disable_streaming_flag(self):
-		self._streaming = False
+    def disable_streaming_flag(self):
+        self._streaming = False
 
 
-	def get_streaming_flag(self):
-		return self._streaming
+    def get_streaming_flag(self):
+        return self._streaming
 
 
     # Keylogger
@@ -228,16 +217,16 @@ class MsfToolbox:
 
 	def dump_keylogger(self, session):
 		shell = self.get_session_shell(session)
-		return keylogger.dump(shell)
+        return keylogger.dump(shell)
 
 
-	# Remote
-	def enable_remote(self):
-		self._remote = True
+    # Remote
+    def enable_remote(self):
+        self._remote = True
 
 
-	def disable_remote(self):
-		self._remote = False
+    def disable_remote(self):
+        self._remote = False
 
 
 	def get_remote_state(self):
