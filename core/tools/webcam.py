@@ -37,5 +37,5 @@ def stop_live(shell):
 def has_webcam(shell):
     shell.write('webcam_list')
     ret = shell.read()
-
+    
     return not("[-] No webcams were found" in ret)

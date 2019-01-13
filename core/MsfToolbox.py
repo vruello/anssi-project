@@ -162,8 +162,9 @@ class MsfToolbox:
 
     def has_webcam(self, session):
         shell = self.get_session_shell(session)
-        webcam.has_webcam(shell)
+        return webcam.has_webcam(shell)
 
+        
     def post_take_snapshot(self, session):
         shell = self.get_session_shell(session)
         snapshot_path = media.get_media_path(session, "snapshots")
@@ -171,6 +172,7 @@ class MsfToolbox:
         # Take snapshot
         webcam.post_take_snapshot(shell, snapshot_path)
 
+        
     def get_snapshots_url(self, session):
         return media.get_medias_url(session, "snapshots")
 
