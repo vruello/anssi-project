@@ -264,8 +264,7 @@ def modulo(num, val):
 
 def session_getadmin(request, id):
 	toolbox.start_bypassuac(id)
-	time.sleep(3)
-	return redirect(sessions)
+	return JsonResponse({'value': True})
 
 def load_kiwi_extension(id):
 	is_admin, is_system = toolbox.get_status(int(id))
