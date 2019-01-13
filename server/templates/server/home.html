@@ -1,15 +1,143 @@
 {% extends "base.html" %}
-{% block title %}Homepage{% endblock %}
+{% block title %}Accueil - WalHID{% endblock %}
 {% block content %}
-
-    <div class="jumbotron">
-        <h1 class="display-4">Welcome!</h1>
-        <p class="lead">This is a simple tool to exploit the given payload.</p>
-        <hr class="my-4">
-        <p>First, you need to set up a listener so that this server listen for the malware request. <em>This may take a few seconds...</em></p>
-        <a class="btn btn-primary btn-lg" href="{% url "init" %}" role="button">Launch the listener</a>
-        <p>Toolbox: {{ flag }}</p>
+    
+    <div class="row mt-5">
+        <div class="col">
+            <h1 class="display-4">Bienvenue sur WalHID !</h1>
+        </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+             <p class="lead">WalHID <em>(Windows Attack Launched by Human Interface Device)</em> permet de prendre le contrôle d'une machine sous Windows 7 à l'aide d'un téléphone Android. </p>
+        </div>
+    </div>
+    
+
+    {% if not flag %}
+    
+        <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <p class="m-2 mr-4 d-none d-sm-block"><i class="fas fa-spinner fa-spin fa-3x"></i></p>
+            <p class="m-0">WalHID est en cours d'initialisation. Les fonctionnalités ne sont pas disponibles dans cet état. <br/>La période d'initialisation peut durer plusieurs minutes après la mise en route de la Raspberry Pi.</p>
+        </div>
+
+        <script type="text/javascript">
+            $(function(){
+                function checkState() {
+                    $.ajax({
+                        url: "/ready",
+                    }).done(function(result) {
+                        if (result.value)
+                            window.location.reload();
+                    });
+                }
+                setInterval(checkState, 5000);
+                
+            });
+        </script>
+
+    {% else %}
+
+    
+    <div class="row">
+        <div class="col-lg-6 mt-3">
+            <h3>Sessions</h3>
+            <hr/>
+            
+            {% if sessions_nbr == 0 %}
+                <p>
+                    Chaque session représente un canal de communication avec une machine sur laquelle vous pouvez prendre le contrôle.
+                </p>
+                <p>
+                    Aucune session n'est disponible.
+                </p>
+            {% else %}
+                <table class="table table-hover mt-5">
+                    <thead class="thead-light">
+                        <tr >
+                            <th scope="col">Victime</th>
+                            <th scope="col">Adresse IP</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key,value in sessions.items %}
+                        <tr class="pointer" onclick="document.location = '{% url "session" key %}';">
+                                <td>{{ value.info }}</td>
+                                <td>{{ value.session_host}}</td>
+                                <td><a href='{% url "session_close" key %}' class="text-danger"><i class="fas fa-times-circle"></i></a></td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            {% endif %}
+            
+        </div>
+
+        <div class="col-lg-6 mt-3">
+            <h3>Gestionnaires</h3>
+            <hr/>
+            
+            {% if jobs_nbr == 0 %}
+                <p>Les gestionnaires vous permettent de vous mettre à l'écoute du logiciel malveillant injecté par le téléphone sur l'ordinateur. </p>
+                <p>La mise en place d'un gestionnaire doit être cohérente avec le logiciel malveillant qui sera téléchargé sur le système victime. Vous pouvez téléverser ce logiciel sur <a href="{% url "upload_payload" %}">cette page</a>.</p>
+                {% if not payload_exists %}
+                <div class="alert alert-warning" role="alert">
+                    Aucun logiciel malveillant n'a été téléversé ! 
+                    <a href="{% url "upload_payload" %}" class="alert-link">Téléverser un logiciel malveillant</a>
+                </div>
+                {% endif %}
+                <p><a class="btn btn-primary btn-block" href="{% url "init" %}" role="button">Créer un gestionnaire</a></p>
+            {% else %}
+
+            <div class="text-right mb-4">
+                <a href="{% url "init" %}" class="btn btn-primary">
+                    <i class="fas fa-plus-circle    "></i>
+                    Ajouter un gestionnaire
+                </a>
+            </div>
+            
+            <table class="table table-striped ">
+                <thead class="thead">
+                    <tr>
+                        <th scope="col">Canal</th>
+                        <th scope="col">Port</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                        <tr>
+                            <td>
+                                {% if job.PAYLOAD == "windows/x64/meterpreter/reverse_https" %}
+                                    HTTPS
+                                {% elif job.PAYLOAD == "windows/x64/meterpreter/reverse_http" %}
+                                    HTTP
+                                {% elif job.PAYLOAD == "windows/x64/meterpreter/reverse_tcp" %}
+                                    TCP
+                                {% endif %}
+                            </td>
+                            <td>{{ job.LPORT }}</td>
+                            <td><a href="{% url "jobs_kill" job.jid %}" class="text-danger"><i class="fas fa-times-circle"></i></a></td>
+                        </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        {% endif %}
+
+
+        </div>
+    </div>
+
+    
+
+    {% endif %}
+    
+
 
 
 
