@@ -25,6 +25,7 @@ def start_live(shell, snapshot_path):
 
     # Clear the line (check timeout as well)
     result = shell.read()
+    print result
 
     return
 
