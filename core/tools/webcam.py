@@ -24,12 +24,11 @@ def post_take_snapshot(shell, snapshot_path):
 
 
 def start_live(shell, snapshot_path):
-    shell.write('webcam_stream -v false -s {}\n'.format(snapshot_path))
+    shell.write('webcam_stream -v false -d 10 -s {}\n'.format(snapshot_path))
 
     # Clear the line (check timeout as well)
-    time.sleep(1)
+    time.sleep(0.2)
     result = shell.read()
-    print result
     
     if "Operation failed" in result:
         return False

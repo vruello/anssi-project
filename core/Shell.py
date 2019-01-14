@@ -12,10 +12,8 @@ class Shell:
 
     def write(self, command):
         if self._toolbox.get_streaming_flag():
-            # CTRL+C
-            self._prompt.kill()
             self._toolbox.disable_streaming_flag()
-
+            
         self._prompt.write(command)
 
 
@@ -51,3 +49,10 @@ class Shell:
     def clean(self):
         """ Just read in case something was written (if nothing is written, don't block """
         self._prompt.read()
+
+
+    def update_streaming_flag(self):
+        ret = self._prompt.read()
+
+        if "[*] Stopped" in ret:
+            self._toolbox.disable_streaming_flag()

