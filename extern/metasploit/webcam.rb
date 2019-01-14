@@ -223,8 +223,10 @@ class Console::CommandDispatcher::Stdapi::Webcam
 
 
   def cmd_webcam_stop(*args)
-      print_status("webcam_stop OK")
-      client.webcam.webcam_stop
+    print_status("webcam_stop OK BIS")
+    client.webcam.webcam_start(1)
+    client.webcam.webcam_get_frame(50)
+    client.webcam.webcam_stop
   end
 
 
