@@ -3,6 +3,12 @@
 
   {% if has_webcam %}
 
+	<p>Vous pouvez accéder en direct à la capture vidéo de la webcam de la cible. La capture se fait par tranches de 10 secondes. </p>
+	<div class="alert alert-warning" role="alert">
+		Si vous souhaitez quitter la page, il est vivement conseillé d'attendre la fin de la période de capture. Dans le cas contraire, des erreurs risquent d'apparaître dans la suite de la navigation.
+	</div> 
+
+
 	{% if not enabled %}
 
 	<p class="text-center">
