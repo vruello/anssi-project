@@ -43,7 +43,7 @@ class MsfToolbox:
         self.disable_streaming_flag()
 
         # Webcam flag
-        self._has_webcam = -1
+        self._has_webcam = {}
 
 
     def init_client(self):
@@ -85,7 +85,7 @@ class MsfToolbox:
         """ Hard kill session """
         self._console.write("sessions -k {}\n".format(session_id))
         self._console.read()
-        
+
 
     def get_session_shell(self, session_id):
         return Shell(self, session_id, self._client.sessions.session(session_id))
@@ -113,8 +113,8 @@ class MsfToolbox:
             if 'Post: windows/gather/homemade_screen_spy' in j:
                 print '[Job killed] {} / {}'.format(key, j)
                 self.kill_job(key)
-    
-    
+
+
     def search(self, search_type, pattern):
         search_set = {"EXPLOIT":  self._client.modules.exploits,
                       "POST": self._client.modules.post}
@@ -172,11 +172,11 @@ class MsfToolbox:
 
     def has_webcam(self, session):
         """ Only compute it the first time """
-        if (self._has_webcam == -1):
+        if not(session in self._has_webcam):
             shell = self.get_session_shell(session)
-            self._has_webcam = webcam.has_webcam(shell)
+            self._has_webcam[session] = webcam.has_webcam(shell)
 
-        return self._has_webcam
+        return self._has_webcam[session]
 
 
     def post_take_snapshot(self, session):
@@ -191,7 +191,6 @@ class MsfToolbox:
         return media.get_medias_url(session, "snapshots")
 
 
-
     # Live
     def start_live(self, session):
         media.remove_live_path()
@@ -203,7 +202,7 @@ class MsfToolbox:
         if res:
             self.enable_streaming_flag()
 
-            
+
     def stop_live(self, session):
         shell = self.get_session_shell(session)
 
@@ -211,11 +210,11 @@ class MsfToolbox:
         webcam.stop_live(shell, self.get_streaming_flag())
         media.remove_live_path()
 
-        
+
     def live_update_frame(self, session):
         shell = self.get_session_shell(session)
         shell.update_streaming_flag()
-        
+
 
     def get_live_url(self):
         return media.get_live_url()
@@ -256,11 +255,10 @@ class MsfToolbox:
 
 
     # Passwords
-
     def get_status(self, session_id):
         shell = self.get_session_shell(session_id)
         # passwords.exit_local_shell(shell)
-        
+
         session = self.get_session(session_id)
         is_admin = self.is_admin(shell)
         is_system = self.is_system(session)
@@ -292,7 +290,7 @@ class MsfToolbox:
     def load_kiwi(self, session_id):
         shell = self.get_session_shell(session_id)
         passwords.load_kiwi(shell)
-        return 
+        return
 
     def get_creds(self, session_id):
         shell = self.get_session_shell(session_id)
@@ -301,4 +299,3 @@ class MsfToolbox:
     def get_wifi_creds(self, session_id):
         shell = self.get_session_shell(session_id)
         return passwords.get_wifi_list(shell)
-    

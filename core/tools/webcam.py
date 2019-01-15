@@ -29,7 +29,7 @@ def start_live(shell, snapshot_path):
     # Clear the line (check timeout as well)
     time.sleep(0.2)
     result = shell.read()
-    
+
     if "Operation failed" in result:
         return False
 
@@ -38,14 +38,13 @@ def start_live(shell, snapshot_path):
 
 def stop_live(shell, streaming_flag):
     if streaming_flag:
-        # Avoid mad clicking stop
-        shell.write('webcam_stop')
-        ret = shell.read()
-        print ret
+        # shell.write('webcam_stop') METASPLOIT bug
+        # ret = shell.read()
+        shell.stop_live()
 
 
 def has_webcam(shell):
     shell.write('webcam_list')
     ret = shell.read()
-    
+
     return not("[-] No webcams were found" in ret)
