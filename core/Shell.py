@@ -13,7 +13,7 @@ class Shell:
     def write(self, command):
         if self._toolbox.get_streaming_flag():
             self._toolbox.disable_streaming_flag()
-            
+            self._prompt.kill()
         self._prompt.write(command)
 
 
@@ -53,6 +53,6 @@ class Shell:
 
     def update_streaming_flag(self):
         ret = self._prompt.read()
-
+	print ret
         if "[*] Stopped" in ret:
             self._toolbox.disable_streaming_flag()

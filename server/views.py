@@ -177,7 +177,7 @@ def session_webcam(request, id):
 def session_live(request, id):
         try:
 	        has_webcam = toolbox.has_webcam(session=int(id))
-	        enabled = toolbox.get_streaming_flag()
+	        enabled = False #toolbox.get_streaming_flag()
 	        live_url = toolbox.get_live_url()
         except httplib.CannotSendRequest:
                 return render(request, 'server/error.html')
@@ -185,13 +185,13 @@ def session_live(request, id):
 	if request.GET.get('action') == 'start':
                 try:
 		        toolbox.start_live(int(id))
-                        enabled = toolbox.get_streaming_flag()
+                        enabled = True #toolbox.get_streaming_flag()
                 except httplib.CannotSendRequest:
 		        return render(request, 'server/error.html')
 	elif request.GET.get('action') == 'update':
                 try:
                         toolbox.live_update_frame(int(id))
-		        enabled = toolbox.get_streaming_flag()
+		        enabled = True #toolbox.get_streaming_flag()
                         return JsonResponse({'value': enabled})
                 except httplib.CannotSendRequest:
 		        return JsonResponse({'value': True})
