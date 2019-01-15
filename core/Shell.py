@@ -12,8 +12,7 @@ class Shell:
 
     def write(self, command):
         if self._toolbox.get_streaming_flag():
-            self._toolbox.disable_streaming_flag()
-            
+            self.stop_live()
         self._prompt.write(command)
 
 
@@ -35,11 +34,6 @@ class Shell:
         return ret
 
 
-    def kill(self):
-        """ Do a CTRL+C on the meterpreter session """
-        self._prompt.kill()
-
-
     def is_timer_expired(self, begin):
         currentTime = datetime.now()
         delta = (currentTime - begin).total_seconds()
@@ -56,3 +50,10 @@ class Shell:
 
         if "[*] Stopped" in ret:
             self._toolbox.disable_streaming_flag()
+
+
+    def stop_live(self):
+        """ Do a CTRL+C on the meterpreter session """
+        self._toolbox.disable_streaming_flag()
+        self._toolbox.disable_webcam(self._index)
+        self._prompt.kill()

