@@ -171,7 +171,7 @@ def session_webcam(request, id):
 	except httplib.CannotSendRequest:
 		return render(request, 'server/error.html')
 
-		return render(request, 'server/session_webcam.html', {'id': int(id), 'has_webcam': has_webcam, 'images': images})
+	return render(request, 'server/session_webcam.html', {'id': int(id), 'has_webcam': has_webcam, 'images': images})
 
 
 def session_live(request, id):

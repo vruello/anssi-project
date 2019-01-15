@@ -12,7 +12,7 @@
 	{% if not enabled %}
 
 	<p class="text-center">
-		<a class="btn btn-primary" href="?action=start" role="button"><i class="fas fa-play"></i>Lancer la capture</a>
+		<a class="btn btn-primary" href="?action=start" role="button"><i class="fas fa-play"></i> Lancer la capture</a>
 	</p>
 	{% endif %}
 
@@ -22,7 +22,7 @@
 	</noscript>
 
   <p class="text-center">
-    <a class="btn btn-danger" href="?action=stop" role="button"><i class="fas fa-stop"></i>Arrêter la capture</a>
+    <a class="btn btn-danger" href="?action=stop" role="button"><i class="fas fa-stop"></i> Arrêter la capture</a>
   </p>
 
 	<div style="float: right">
@@ -67,7 +67,7 @@
 		req.send(null);
 	}
 
-	setInterval(function() { updateFrame(); }, 200);
+	setInterval(function() { updateFrame(); }, 20);
 	</script>
 	{% endif %}
 

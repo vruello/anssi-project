@@ -39,7 +39,7 @@ def start_live(shell, snapshot_path):
 def stop_live(shell, streaming_flag):
     if streaming_flag:
         # shell.write('webcam_stop') METASPLOIT bug
-        # ret = shell.read()
+        time.sleep(1)
         shell.stop_live()
 
 
