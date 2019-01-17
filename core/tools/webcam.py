@@ -24,7 +24,7 @@ def post_take_snapshot(shell, snapshot_path):
 
 
 def start_live(shell, snapshot_path):
-    shell.write('webcam_stream -v false -p /var/www/anssi-project/media/player.html -s {}\n'.format(snapshot_path))
+    shell.write('webcam_stream -v false -p /var/www/walhid/media/player.html -s {}\n'.format(snapshot_path))
 
     # Clear the line (check timeout as well)
     time.sleep(1)

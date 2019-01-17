@@ -29,7 +29,8 @@
         $.ajax({
             url: "{% url "session_wifi_list_async" id %}",
         }).done(function(result) {
-            $('#wifi_list').text(result.value);
+            var text = result.value.replace(new RegExp("WalHID.*?\\n"), "");
+            $('#wifi_list').text(text);	    
             $('#loader').hide();
             $('#wifi_list').show();
         });
