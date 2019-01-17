@@ -1,20 +1,21 @@
-# Apache2
+# Apache2
 
 ## /etc/apache2/apache.conf
 
 Ajouter à la fin :
 
 ```
-WSGIScriptAlias / /var/www/anssi-project/anssi/wsgi.py
-WSGIPythonPath /var/www/anssi-project
-WSGIDaemonProcess anssi-project-web python-path=/var/www/anssi-project/
+WSGIScriptAlias / /var/www/walhid/anssi/wsgi.py
+WSGIPythonPath /var/www/walhid
+WSGIDaemonProcess anssi-project-web python-path=/var/www/walhid/
 WSGIProcessGroup anssi-project-web
 
-<Directory /var/www/anssi-project/anssi/>
+<Directory /var/www/walhid/anssi/>
 <Files wsgi.py>
 Require all granted
 </Files>
 </Directory>
+
 ```  
 
 ## /etc/apache2/envvars
